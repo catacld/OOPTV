@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Movies implements Page{
+public class Movies implements Page {
 
     private ArrayList<String> destinationPages;
 
@@ -32,13 +32,20 @@ public class Movies implements Page{
         onPageActions.add("filter");
     }
 
+    /**
+     * Change the page from the current page to
+     * another page
+     * @param actionDetails node where the details of the
+     *                      action are stored
+     * @return the destination page
+     */
     @Override
-    public Page changePage(ObjectNode actionDetails) {
+    public final Page changePage(final ObjectNode actionDetails) {
         String destinationPage = actionDetails.get("page").asText();
 
         // check if the action can be executed
         // while on this page
-        boolean valid = CheckAction.canChangePage(destinationPage,destinationPages);
+        boolean valid = CheckAction.canChangePage(destinationPage, destinationPages);
 
         if (!valid) {
 
@@ -51,21 +58,25 @@ public class Movies implements Page{
             switch (destinationPage) {
                 case "see details" -> {
                     String movie = actionDetails.get("movie").asText();
-                    if (Database.getInstance().getMovie(Database.getInstance().getFilteredMovies(),movie) == null) {
+                    if (Database.getInstance().getMovie(Database.getInstance().getFilteredMovies(),
+                                                        movie) == null) {
                         // the movie is not available for the current user
                         Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
                         return this;
                     } else {
                         // write the output of the action
                         List<Movie> movieToPrint = new ArrayList<>();
-                        movieToPrint.add(Database.getInstance().getMovie(Database.getInstance().getFilteredMovies(),movie));
+                        movieToPrint.add(Database.getInstance().getMovie(
+                                         Database.getInstance().getFilteredMovies(), movie));
                         Writer.getInstance().addOutput(null,
                                 movieToPrint, Database.getInstance().getCurrentUser());
-                        return new SeeDetails(Database.getInstance().getMovie(Database.getInstance().getFilteredMovies(), movie));
+                        return new SeeDetails(Database.getInstance().getMovie(
+                                    Database.getInstance().getFilteredMovies(), movie));
                     }
                 }
                 case "homepage autentificat" -> {
-                    Writer.getInstance().addOutput(null, new ArrayList<>(), Database.getInstance().getCurrentUser());
+                    Writer.getInstance().addOutput(null, new ArrayList<>(),
+                                                    Database.getInstance().getCurrentUser());
                     return new AuthenticatedHome();
                 }
                 case "logout" -> {
@@ -73,25 +84,32 @@ public class Movies implements Page{
                     Database.getInstance().setFilteredMovies(null);
                     return UnauthenticatedHome.getInstance();
                 }
-                case "movies" -> {
+                default -> {
                     // reset the filtered list when changing page
-                    Database.getInstance().deepCopyFilteredMovies(Database.getInstance().getCurrentUser());
+                    Database.getInstance().deepCopyFilteredMovies(
+                            Database.getInstance().getCurrentUser());
                     Writer.getInstance().addOutput(null, Database.getInstance().getFilteredMovies(),
                             Database.getInstance().getCurrentUser());
                     return this;
                 }
             }
         }
-        return this;
     }
 
+
+    /**
+     * Execute an "on page" action
+     * @param actionDetails node where the details of the
+     *                      action are stored
+     * @return the same page
+     */
     @Override
-    public Page onPage(ObjectNode actionDetails) {
+    public final Page onPage(final ObjectNode actionDetails) {
         String action = actionDetails.get("feature").asText();
 
         // check if the action can be executed
         // while on this page
-        boolean valid = CheckAction.canExecuteAction(action,onPageActions);
+        boolean valid = CheckAction.canExecuteAction(action, onPageActions);
 
 
         if (!valid) {
@@ -114,7 +132,8 @@ public class Movies implements Page{
 
                     // reset the original list in the database
                     // since the filter messes it up
-                    Database.getInstance().deepCopyFilteredMovies(Database.getInstance().getCurrentUser());
+                    Database.getInstance().deepCopyFilteredMovies(
+                            Database.getInstance().getCurrentUser());
                     return this;
                 }
                 case "filter" -> {
@@ -124,21 +143,23 @@ public class Movies implements Page{
                         String durationOrder = null;
 
                         if (actionDetails.get("filters").get("sort").get("rating") != null) {
-                            ratingOrder = actionDetails.get("filters").get("sort").get("rating").asText();
+                            ratingOrder = actionDetails.get("filters").
+                                          get("sort").get("rating").asText();
                         }
                         if (actionDetails.get("filters").get("sort").get("duration") != null) {
-                            durationOrder = actionDetails.get("filters").get("sort").get("duration").asText();
+                            durationOrder = actionDetails.get("filters").get("sort").
+                                            get("duration").asText();
                         }
 
 
                         // filter the list of movies by both
                         // rating and duration
                         if (ratingOrder != null && durationOrder != null) {
-                            moviesList = FilterMovies.sortByBoth(moviesList,durationOrder,ratingOrder);
-                        }
-                         else if (ratingOrder != null) {
+                            moviesList = FilterMovies.sortByBoth(moviesList,
+                                                      durationOrder, ratingOrder);
+                        } else if (ratingOrder != null) {
                              // filter the list of movies only by rating
-                            moviesList = FilterMovies.sortByRating(moviesList,ratingOrder);
+                            moviesList = FilterMovies.sortByRating(moviesList, ratingOrder);
                         } else if (durationOrder != null) {
                              // filter the list of movies only by duration
                             moviesList = FilterMovies.sortByDuration(moviesList, durationOrder);
@@ -154,7 +175,8 @@ public class Movies implements Page{
                             List<String> actors;
                             try {
                                 actors = objectMapper.readValue(
-                                        actionDetails.get("filters").get("contains").get("actors").traverse(), refList);
+                                        actionDetails.get("filters").get("contains").
+                                                      get("actors").traverse(), refList);
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
@@ -171,7 +193,8 @@ public class Movies implements Page{
                             List<String> genres;
                             try {
                                 genres = objectMapper.readValue(
-                                        actionDetails.get("filters").get("contains").get("genre").traverse(), refList);
+                                        actionDetails.get("filters").get("contains").
+                                                      get("genre").traverse(), refList);
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
@@ -188,9 +211,11 @@ public class Movies implements Page{
                             moviesList, Database.getInstance().getCurrentUser());
                     return this;
                 }
+                default -> {
+                    return this;
+                }
             }
         }
-        return this;
     }
 
 

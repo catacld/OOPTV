@@ -2,7 +2,7 @@ package classes;
 
 public class Credentials {
     private String name;
-    private String password;
+    private  String password;
     private String accountType;
     private String country;
     private String balance;
@@ -10,48 +10,46 @@ public class Credentials {
     public Credentials() {
     }
 
-    public String getName() {
+    public final String getName() {
         return this.name;
     }
 
-    public void setName(String name) {
+    public final void setName(final String name) {
         this.name = name;
     }
 
-    public String getPassword() {
+    public final String getPassword() {
         return this.password;
     }
 
-    public void setPassword(String password) {
+    public final void setPassword(final String password) {
         this.password = password;
     }
 
-    public String getAccountType() {
+    public final String getAccountType() {
         return this.accountType;
     }
 
-    public void setAccountType(String accountType) {
+    public final void setAccountType(final String accountType) {
         this.accountType = accountType;
     }
 
-    public String getCountry() {
+    public final String getCountry() {
         return this.country;
     }
 
-    public void setCountry(String country) {
+    public final void setCountry(final String country) {
         this.country = country;
     }
 
-    public String getBalance() {
+    public final String getBalance() {
         return this.balance;
     }
 
-    public void setBalance(String balance) {
+    public final void setBalance(final String balance) {
         this.balance = balance;
     }
 
-    public String toString() {
-        return "classes.Credentials{name='" + this.name + "', password='" + this.password + "', accountType='" + this.accountType + "', country='" + this.country + "', balance=" + this.balance + "}";
-    }
+
 }
 

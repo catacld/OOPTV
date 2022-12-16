@@ -25,7 +25,7 @@ public class Movie {
     }
 
     // deep-copy constructor
-    public Movie(Movie movie) {
+    public Movie(final Movie movie) {
         this.name = movie.getName();
         this.year = movie.getYear();
         this.duration = movie.getDuration();
@@ -37,86 +37,84 @@ public class Movie {
         this.numRatings = movie.getNumRatings();
     }
 
-    public String toString() {
-        return "classes.Movie{name='" + this.name + "', year=" + this.year + ", duration=" + this.duration + ", genres=" + this.genres + ", actors=" + this.actors + ", countriesBanned=" + this.countriesBanned + "}";
-    }
-
-    public String getName() {
+    public final String getName() {
         return this.name;
     }
 
-    public void setName(String name) {
+    public final void setName(final String name) {
         this.name = name;
     }
 
-    public int getYear() {
+    public final int getYear() {
         return this.year;
     }
 
-    public void setYear(int year) {
+    public final void setYear(final int year) {
         this.year = year;
     }
 
-    public int getDuration() {
+    public final int getDuration() {
         return this.duration;
     }
 
-    public void setDuration(int duration) {
+    public final void setDuration(final int duration) {
         this.duration = duration;
     }
 
-    public ArrayList<String> getGenres() {
+    public final ArrayList<String> getGenres() {
         return this.genres;
     }
 
-    public void setGenres(ArrayList<String> genres) {
+    public final void setGenres(final ArrayList<String> genres) {
         this.genres = genres;
     }
 
-    public ArrayList<String> getActors() {
+    public final ArrayList<String> getActors() {
         return this.actors;
     }
 
-    public void setActors(ArrayList<String> actors) {
+    public final void setActors(final ArrayList<String> actors) {
         this.actors = actors;
     }
 
-    public ArrayList<String> getCountriesBanned() {
+    public final ArrayList<String> getCountriesBanned() {
         return this.countriesBanned;
     }
 
-    public void setCountriesBanned(ArrayList<String> countriesBanned) {
+    public final void setCountriesBanned(final ArrayList<String> countriesBanned) {
         this.countriesBanned = countriesBanned;
     }
 
-    public int getNumLikes() {
+    public final int getNumLikes() {
         return numLikes;
     }
 
-    public void setNumLikes(int numLikes) {
+    public final void setNumLikes(final int numLikes) {
         this.numLikes = numLikes;
     }
 
-    public Double getRating() {
+    public final Double getRating() {
         return this.rating;
     }
 
-    public void setRating(Double rating) {
+    public final void setRating(final Double rating) {
         this.rating = rating;
     }
 
-    public int getNumRatings() {
+    public final int getNumRatings() {
         return numRatings;
     }
 
-    public void setNumRatings(int numRatings) {
+    public final void setNumRatings(final int numRatings) {
         this.numRatings = numRatings;
     }
 
-    // check if the movie is banned for a
-    // specific user
-    public boolean isBannedForTheUser(String userCountry) {
-        for (String country : this.countriesBanned ) {
+    /**
+     * Check if the movie is banned for a specific suer
+     * @param userCountry the user's country
+     */
+    public final boolean isBannedForTheUser(final String userCountry) {
+        for (String country : this.countriesBanned) {
             if (country.equals(userCountry)) {
                 return true;
             }
@@ -125,8 +123,13 @@ public class Movie {
         return false;
     }
 
-    public void rate (Double rating) {
-        this.ratingSum += rating;
+
+    /**
+     * Rate the movie
+     * @param givenRating the rating given to the movie
+     */
+    public final void rate(final Double givenRating) {
+        this.ratingSum += givenRating;
         this.numRatings++;
         this.rating = ratingSum / numRatings;
     }

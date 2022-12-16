@@ -20,7 +20,7 @@ public class User {
 
     private List<Movie> ratedMovies;
 
-    public User(Credentials credentials) {
+    public User(final Credentials credentials) {
         this.credentials = credentials;
         purchasedMovies = new ArrayList<>();
         watchedMovies = new ArrayList<>();
@@ -37,59 +37,59 @@ public class User {
         numFreePremiumMovies = 15;
     }
 
-    public Credentials getCredentials() {
+    public final Credentials getCredentials() {
         return this.credentials;
     }
 
-    public void setCredentials(Credentials credentials) {
+    public final void setCredentials(final Credentials credentials) {
         this.credentials = credentials;
     }
 
-    public int getTokensCount() {
+    public final int getTokensCount() {
         return tokensCount;
     }
 
-    public void setTokensCount(int tokensCount) {
+    public final void setTokensCount(final int tokensCount) {
         this.tokensCount = tokensCount;
     }
 
-    public int getNumFreePremiumMovies() {
+    public final int getNumFreePremiumMovies() {
         return numFreePremiumMovies;
     }
 
-    public void setNumFreePremiumMovies(int numFreePremiumMovies) {
+    public final void setNumFreePremiumMovies(final int numFreePremiumMovies) {
         this.numFreePremiumMovies = numFreePremiumMovies;
     }
 
-    public List<Movie> getPurchasedMovies() {
+    public final List<Movie> getPurchasedMovies() {
         return purchasedMovies;
     }
 
-    public void setPurchasedMovies(List<Movie> purchasedMovies) {
+    public final void setPurchasedMovies(final List<Movie> purchasedMovies) {
         this.purchasedMovies = purchasedMovies;
     }
 
-    public List<Movie> getWatchedMovies() {
+    public final List<Movie> getWatchedMovies() {
         return watchedMovies;
     }
 
-    public void setWatchedMovies(List<Movie> watchedMovies) {
+    public final void setWatchedMovies(final List<Movie> watchedMovies) {
         this.watchedMovies = watchedMovies;
     }
 
-    public List<Movie> getLikedMovies() {
+    public final List<Movie> getLikedMovies() {
         return likedMovies;
     }
 
-    public void setLikedMovies(List<Movie> likedMovies) {
+    public final void setLikedMovies(final List<Movie> likedMovies) {
         this.likedMovies = likedMovies;
     }
 
-    public List<Movie> getRatedMovies() {
+    public final List<Movie> getRatedMovies() {
         return ratedMovies;
     }
 
-    public void setRatedMovies(List<Movie> ratedMovies) {
+    public final void setRatedMovies(final List<Movie> ratedMovies) {
         this.ratedMovies = ratedMovies;
     }
 }

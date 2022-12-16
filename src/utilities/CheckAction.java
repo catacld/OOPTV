@@ -8,8 +8,17 @@ public class CheckAction {
 
     // check if a "change page" action can be
     // executed while on a certain page
-    public static boolean canChangePage(String page, ArrayList<String> destinationPages) {
-        for(String destination : destinationPages) {
+    /**
+     * Check if a "change page" action can be
+     * executed while on a certain page
+     * @param page the destination page
+     * @param destinationPages the list of possible
+     *                         destination pages
+     * @return true if possible, else false
+     */
+        public static boolean canChangePage(final String page,
+                                            final ArrayList<String> destinationPages) {
+        for (String destination : destinationPages) {
             if (destination.equals(page)) {
                 return true;
             }
@@ -20,7 +29,18 @@ public class CheckAction {
         return false;
     }
 
-    public static boolean canExecuteAction(String actionToExecute, ArrayList<String> onPageActions) {
+
+    /**
+     * Check if an "on page" action can be
+     * executed while on a certain page
+     * @param actionToExecute the action to be executed
+     * @param onPageActions the list of possible actions
+     *                      to be executed while on the
+     *                      current page
+     * @return true if possible, else false
+     */
+    public static boolean canExecuteAction(final String actionToExecute,
+                                           final ArrayList<String> onPageActions) {
         for (String action : onPageActions) {
             if (action.equals(actionToExecute)) {
                 return true;

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
 
-public class LoginPage implements Page{
+public final class LoginPage implements Page {
 
     private static LoginPage instance = null;
 
@@ -26,6 +26,9 @@ public class LoginPage implements Page{
         onPageActions.add("login");
     }
 
+    /**
+     * Get the instance of the page
+     */
     public static LoginPage getInstance() {
         if (instance == null) {
             instance =  new LoginPage();
@@ -38,26 +41,35 @@ public class LoginPage implements Page{
         LoginPage.instance = instance;
     }
 
-    // execute a "change page" action
-    // while on the login page
+    /**
+     * Change the page from the current page to
+     * another page
+     * @param actionDetails node where the details of the
+     *                      action are stored
+     * @return the destination page
+     */
     @Override
-    public Page changePage(ObjectNode actionDetails) {
+    public Page changePage(final ObjectNode actionDetails) {
         // since there are no "change page" actions that can be executed
         // while on this page, always write an error
         Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         return this;
     }
 
-    // execute an "on page" action
-    // while on the login page
+    /**
+     * Execute an "on page" action
+     * @param actionDetails node where the details of the
+     *                      action are stored
+     * @return the same page
+     */
     @Override
-    public Page onPage(ObjectNode actionDetails) {
+    public Page onPage(final ObjectNode actionDetails) {
 
         String action = actionDetails.get("feature").asText();
 
         // check if the action can be executed while
         // on the login page
-        boolean valid = CheckAction.canExecuteAction(action,onPageActions);
+        boolean valid = CheckAction.canExecuteAction(action, onPageActions);
 
 
         if (!valid) {
@@ -71,7 +83,7 @@ public class LoginPage implements Page{
             String password = actionDetails.get("credentials").get("password").asText();
 
             // check if the login was successful
-            User loggedUser = Database.getInstance().login(username,password);
+            User loggedUser = Database.getInstance().login(username, password);
 
             // write the output based on the action's result
             if (loggedUser != null) {
@@ -80,7 +92,8 @@ public class LoginPage implements Page{
                 // available movies to the user in the database
                 Database.getInstance().setCurrentUser(loggedUser);
                 Database.getInstance().deepCopyFilteredMovies(loggedUser);
-                Writer.getInstance().addOutput(null, new ArrayList<>(), Database.getInstance().getCurrentUser());
+                Writer.getInstance().addOutput(null, new ArrayList<>(),
+                                                Database.getInstance().getCurrentUser());
                 return new AuthenticatedHome();
             } else {
                 // the login failed

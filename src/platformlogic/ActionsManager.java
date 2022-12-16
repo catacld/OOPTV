@@ -11,12 +11,15 @@ public class ActionsManager {
     private List<ObjectNode> actions;
     private Page currentPage;
 
-    public ActionsManager(List<ObjectNode> actions) {
+    public ActionsManager(final List<ObjectNode> actions) {
         this.actions = actions;
         this.currentPage = UnauthenticatedHome.getInstance();
     }
 
     // execute the actions given as input
+    /**
+     * Execute the actions given as input
+     */
     public void manageActions() {
         // traverse the array of actions
         for (ObjectNode action : actions) {
@@ -30,6 +33,9 @@ public class ActionsManager {
                 // execute an "on page" action
                 case "on page" -> {
                     currentPage = currentPage.onPage(action);
+                }
+                default -> {
+                    return;
                 }
             }
         }

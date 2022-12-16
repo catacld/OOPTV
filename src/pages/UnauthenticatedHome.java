@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
 
-public class UnauthenticatedHome implements Page{
+public final class UnauthenticatedHome implements Page {
 
     private static UnauthenticatedHome  instance = null;
 
@@ -26,6 +26,9 @@ public class UnauthenticatedHome implements Page{
         this.onPageActions = new ArrayList<>();
     }
 
+    /**
+     * Get the instance
+     */
     public static UnauthenticatedHome getInstance() {
         if (instance == null) {
             instance =  new UnauthenticatedHome();
@@ -38,14 +41,21 @@ public class UnauthenticatedHome implements Page{
         UnauthenticatedHome.instance = instance;
     }
 
+    /**
+     * Change the page from the current page to
+     * another page
+     * @param actionDetails node where the details of the
+     *                      action are stored
+     * @return the destination page
+     */
     @Override
-    public Page changePage(ObjectNode actionDetails) {
+    public Page changePage(final ObjectNode actionDetails) {
 
         String destinationPage = actionDetails.get("page").asText();
 
         // check if the destination page is reachable
         // from the current page
-        boolean valid = CheckAction.canChangePage(destinationPage,destinationPages);
+        boolean valid = CheckAction.canChangePage(destinationPage, destinationPages);
 
         // if it is not print an error
         // stay on the same page
@@ -62,8 +72,14 @@ public class UnauthenticatedHome implements Page{
 
     }
 
+    /**
+     * Execute an "on page" action
+     * @param actionDetails node where the details of the
+     *                      action are stored
+     * @return the same page
+     */
     @Override
-    public Page onPage(ObjectNode actionDetails) {
+    public Page onPage(final ObjectNode actionDetails) {
 
         // since there are no "on page" actions that can be executed
         // while on this page, always write an error

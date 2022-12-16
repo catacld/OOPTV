@@ -29,7 +29,8 @@ public class Writer {
 
     private User currentUser;
 
-    public Writer(String error, ArrayList<Movie> currentMoviesList, User currentUser) {
+    public Writer(final String error, final ArrayList<Movie> currentMoviesList,
+                  final User currentUser) {
         this.error = error;
         this.currentMoviesList = currentMoviesList;
         this.currentUser = currentUser;
@@ -38,6 +39,9 @@ public class Writer {
     private Writer() {
     }
 
+    /**
+     * Get the instance of the writer
+     */
     public static Writer getInstance() {
         if (instance == null) {
             instance = new Writer();
@@ -46,15 +50,24 @@ public class Writer {
         return instance;
     }
 
-    // add the result of an action to the output node
-    public void addOutput(String error, List<Movie> MoviesList, User currentUser) {
-        this.error = error;
-        this.currentMoviesList = MoviesList;
-        this.currentUser = currentUser;
+    /**
+     * Add the result of an action to the output node
+     * @param outputError the error to be written
+     * @param moviesList the list of movies to be written
+     * @param loggedUser the logged-in user
+     */
+    public void addOutput(final String outputError, final List<Movie> moviesList,
+                          final User loggedUser) {
+        this.error = outputError;
+        this.currentMoviesList = moviesList;
+        this.currentUser = loggedUser;
         output.add(objectMapper.convertValue(this, JsonNode.class));
     }
 
-    // write the output to the file
+
+    /**
+     * Write the output to the file
+     */
     public void writeOutput() {
         try {
             this.objectWriter.writeValue(new File("results.out"), this.output);
@@ -64,27 +77,27 @@ public class Writer {
         }
     }
 
-    public String getError() {
+    public final String getError() {
         return error;
     }
 
-    public void setError(String error) {
+    public final void setError(final String error) {
         this.error = error;
     }
 
-    public List<Movie> getCurrentMoviesList() {
+    public final List<Movie> getCurrentMoviesList() {
         return currentMoviesList;
     }
 
-    public void setCurrentMoviesList(List<Movie> currentMoviesList) {
+    public final void setCurrentMoviesList(final List<Movie> currentMoviesList) {
         this.currentMoviesList = currentMoviesList;
     }
 
-    public User getCurrentUser() {
+    public final User getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(User currentUser) {
+    public final void setCurrentUser(final User currentUser) {
         this.currentUser = currentUser;
     }
 }

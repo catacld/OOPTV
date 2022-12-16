@@ -6,7 +6,7 @@ import classes.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Database {
+public final class Database {
 
     private static Database instance = null;
 
@@ -26,6 +26,9 @@ public class Database {
     private Database() {
     }
 
+    /**
+     * Get the instance of the database
+     */
     public static Database getInstance() {
         if (instance == null) {
             instance = new Database();
@@ -34,14 +37,19 @@ public class Database {
         return instance;
     }
 
-    // try to execute the login action
-    // in case of success, the logged-in user will be returned
-    // else, null will be returned
-    public User login(String username, String password) {
+
+    /**
+     * Execute the login action
+     * @param username the username of the user
+     * @param password the password of the user
+     * @return in case of succes, the logged-in user,
+     *          else null
+     */
+    public User login(final String username, final String password) {
 
         for (User user : users) {
-            if (user.getCredentials().getPassword().equals(password) &&
-                    user.getCredentials().getName().equals(username)) {
+            if (user.getCredentials().getPassword().equals(password)
+                    && user.getCredentials().getName().equals(username)) {
                 currentUser = user;
                 return user;
             }
@@ -50,8 +58,12 @@ public class Database {
         return null;
     }
 
-    // check if a given username is available
-    public boolean checkUsernameAvailable(String username) {
+
+    /**
+     * Check if a given username is available
+     * @param username the username to be checked
+     */
+    public boolean checkUsernameAvailable(final String username) {
         for (User user : users) {
             if (user.getCredentials().getName().equals(username)) {
                 // the username is already taken
@@ -69,7 +81,7 @@ public class Database {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(final List<User> users) {
         this.users = users;
     }
 
@@ -77,7 +89,7 @@ public class Database {
         return movies;
     }
 
-    public void setMovies(List<Movie> movies) {
+    public void setMovies(final List<Movie> movies) {
         this.movies = movies;
     }
 
@@ -85,7 +97,7 @@ public class Database {
         return currentUser;
     }
 
-    public void setCurrentUser(User currentUser) {
+    public void setCurrentUser(final User currentUser) {
         this.currentUser = currentUser;
     }
 
@@ -93,13 +105,17 @@ public class Database {
         return filteredMovies;
     }
 
-    public void setFilteredMovies(List<Movie> filteredMovies) {
+    public void setFilteredMovies(final List<Movie> filteredMovies) {
         this.filteredMovies = filteredMovies;
     }
 
-    // deep-copy the list of available movies
-    // to the user
-    public void deepCopyFilteredMovies(User user) {
+
+    /**
+     * Deep-copy the list of available movies
+     * to a user
+     * @param user the user whose list will be deep-copied
+     */
+    public void deepCopyFilteredMovies(final User user) {
         this.filteredMovies = new ArrayList<>();
         for (Movie movie : this.movies) {
             if (!movie.isBannedForTheUser(currentUser.getCredentials().getCountry())) {
@@ -109,9 +125,13 @@ public class Database {
         }
     }
 
-    // get a movie from the list of movies available
-    // to the user
-    public Movie getMovie(List<Movie> moviesList, String movieName) {
+    /**
+     * Return a movie from the list of movies available
+     * to the user
+     * @param moviesList the list of movies available to the user
+     * @param movieName the name of the movie searched for
+     */
+    public Movie getMovie(final List<Movie> moviesList, final String movieName) {
         for (Movie movie : moviesList) {
             if (movie.getName().equals(movieName)) {
                 return movie;

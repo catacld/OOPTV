@@ -9,7 +9,7 @@ import utilities.CheckAction;
 
 import java.util.ArrayList;
 
-public class RegisterPage implements Page{
+public final class RegisterPage implements Page {
 
     private static RegisterPage instance = null;
 
@@ -27,6 +27,9 @@ public class RegisterPage implements Page{
 
     }
 
+    /**
+     * Get the instance
+     */
     public static RegisterPage getInstance() {
         if (instance == null) {
             instance = new RegisterPage();
@@ -35,22 +38,36 @@ public class RegisterPage implements Page{
         return instance;
     }
 
+    /**
+     * Change the page from the current page to
+     * another page
+     * @param actionDetails node where the details of the
+     *                      action are stored
+     * @return the destination page
+     */
     @Override
-    public Page changePage(ObjectNode actionDetails) {
+    public Page changePage(final ObjectNode actionDetails) {
         // since there are no "change page" actions that can be executed
         // while on this page, always write an error
         Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         return this;
     }
 
+
+    /**
+     * Execute an "on page" action
+     * @param actionDetails node where the details of the
+     *                      action are stored
+     * @return the same page
+     */
     @Override
-    public Page onPage(ObjectNode actionDetails) {
+    public Page onPage(final ObjectNode actionDetails) {
 
         String action = actionDetails.get("feature").asText();
 
         // check if the action can be executed while
         // on the register page
-        boolean valid = CheckAction.canExecuteAction(action,onPageActions);
+        boolean valid = CheckAction.canExecuteAction(action, onPageActions);
 
         if (!valid) {
             return this;
@@ -60,10 +77,12 @@ public class RegisterPage implements Page{
 
             // extract the credentials of the new user
             ObjectMapper mapper = new ObjectMapper();
-            Credentials userCredentials = mapper.convertValue(actionDetails.get("credentials"),Credentials.class);
+            Credentials userCredentials = mapper.convertValue(actionDetails.get("credentials"),
+                                          Credentials.class);
 
             // check if the username is available
-            boolean available = Database.getInstance().checkUsernameAvailable(userCredentials.getName());
+            boolean available = Database.getInstance().checkUsernameAvailable(
+                                userCredentials.getName());
 
             // write the output based on the action's result
             if (available) {
@@ -77,7 +96,8 @@ public class RegisterPage implements Page{
                 Database.getInstance().deepCopyFilteredMovies(userToAdd);
 
                 // write the output of the action
-                Writer.getInstance().addOutput(null, new ArrayList<>(), Database.getInstance().getCurrentUser());
+                Writer.getInstance().addOutput(
+                        null, new ArrayList<>(), Database.getInstance().getCurrentUser());
                 return new AuthenticatedHome();
             } else {
                 Writer.getInstance().addOutput("Error", new ArrayList<>(), null);

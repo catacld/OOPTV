@@ -19,13 +19,15 @@ public class Reader {
 
     private JsonNode node;
 
-    public Reader(String path) {
+    public Reader(final String path) {
         this.path = path;
         this.objectMapper = new ObjectMapper();
     }
 
-    // read the list of users from the
-    // input file
+
+    /**
+     * Read the list of users from the input file
+     */
     public List<User> readUsers() {
 
         List<User> users;
@@ -37,7 +39,9 @@ public class Reader {
         }
 
         this.node = this.node.get("users");
-        TypeReference<List<User>> refList = new TypeReference<>() {};
+        TypeReference<List<User>> refList = new TypeReference<>() {
+
+        };
 
         try {
             users = this.objectMapper.readValue(this.node.traverse(), refList);
@@ -48,8 +52,10 @@ public class Reader {
         return users;
     }
 
-    // read the list of movies from the
-    // input file
+
+    /**
+     * Read the list of movies from the input file
+     */
     public List<Movie> readMovies() {
 
         List<Movie> movies;
@@ -73,8 +79,10 @@ public class Reader {
         return movies;
     }
 
-    // read the list of actions from the
-    // input file
+
+    /**
+     * Read the list of actions from the input file
+     */
     public List<ObjectNode> readActions() {
 
         List<ObjectNode> actions;
@@ -86,7 +94,9 @@ public class Reader {
         }
 
         this.node = this.node.get("actions");
-        TypeReference<List<ObjectNode>> refList = new TypeReference<>() {};
+        TypeReference<List<ObjectNode>> refList = new TypeReference<>() {
+
+        };
 
         try {
             actions = this.objectMapper.readValue(this.node.traverse(), refList);

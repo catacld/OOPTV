@@ -1,7 +1,11 @@
 import platformlogic.StreamingService;
 
 public class Main {
-    public static void main(String[] args) {
+
+    /**
+     * main
+     */
+    public static void main(final String[] args) {
         StreamingService service = new StreamingService(args[0]);
         service.start();
 

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
 
-public class Upgrades implements Page{
+public class Upgrades implements Page {
 
     private ArrayList<String> destinationPages;
 
@@ -26,8 +26,15 @@ public class Upgrades implements Page{
         onPageActions.add("buy tokens");
     }
 
+    /**
+     * Change the page from the current page to
+     * another page
+     * @param actionDetails node where the details of the
+     *                      action are stored
+     * @return the destination page
+     */
     @Override
-    public Page changePage(ObjectNode actionDetails) {
+    public Page changePage(final ObjectNode actionDetails) {
 
             String destinationPage = actionDetails.get("page").asText();
 
@@ -43,12 +50,14 @@ public class Upgrades implements Page{
 
                 switch (destinationPage) {
                     case "movies" -> {
-                        Writer.getInstance().addOutput(null, Database.getInstance().getFilteredMovies(),
+                        Writer.getInstance().addOutput(null,
+                                Database.getInstance().getFilteredMovies(),
                                 Database.getInstance().getCurrentUser());
                         return new Movies();
                     }
                     case "homepage autentificat" -> {
-                        Writer.getInstance().addOutput(null, new ArrayList<>(), Database.getInstance().getCurrentUser());
+                        Writer.getInstance().addOutput(null, new ArrayList<>(),
+                                Database.getInstance().getCurrentUser());
                         return new AuthenticatedHome();
                     }
                     case "logout" -> {
@@ -56,14 +65,23 @@ public class Upgrades implements Page{
                         Database.getInstance().setFilteredMovies(null);
                         return UnauthenticatedHome.getInstance();
                     }
+                    default -> {
+                        return this;
+                    }
                 }
             }
 
-        return this;
     }
 
+
+    /**
+     * Execute an "on page" action
+     * @param actionDetails node where the details of the
+     *                      action are stored
+     * @return the same page
+     */
     @Override
-    public Page onPage(ObjectNode actionDetails) {
+    public Page onPage(final ObjectNode actionDetails) {
 
         String action = actionDetails.get("feature").asText();
 
@@ -86,28 +104,34 @@ public class Upgrades implements Page{
 
                     // update the user's tokens balance
                     Database.getInstance().getCurrentUser().setTokensCount(
-                            Database.getInstance().getCurrentUser().getTokensCount() + Integer.parseInt(amount));
+                            Database.getInstance().getCurrentUser().getTokensCount()
+                                    + Integer.parseInt(amount));
 
                     // update the user's balance after buying
                     // the tokens
                     Database.getInstance().getCurrentUser().getCredentials().setBalance(
-                            Integer.toString(Integer.parseInt(Database.getInstance().getCurrentUser().getCredentials().getBalance())  -
-                                   Integer.parseInt(amount)));
+                            Integer.toString(Integer.parseInt(Database.getInstance().
+                                    getCurrentUser().getCredentials().getBalance())
+                                    - Integer.parseInt(amount)));
                     return this;
                 }
                 case "buy premium account" -> {
 
                     // update the status of the user's account
-                    Database.getInstance().getCurrentUser().getCredentials().setAccountType("premium");
+                    Database.getInstance().getCurrentUser().getCredentials().
+                            setAccountType("premium");
 
                     // substract the price of the premium account
-                    Database.getInstance().getCurrentUser().setTokensCount(Database.getInstance().getCurrentUser().getTokensCount() - 10);
+                    Database.getInstance().getCurrentUser().setTokensCount(Database.getInstance().
+                            getCurrentUser().getTokensCount() - 10);
 
+                    return this;
+                }
+                default -> {
                     return this;
                 }
             }
         }
-        return this;
     }
 
 

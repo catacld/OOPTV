@@ -13,7 +13,7 @@ public class StreamingService {
     private ObjectMapper objectMapper;
     private ArrayNode output;
     private ObjectWriter objectWriter;
-    public StreamingService(String path) {
+    public StreamingService(final String path) {
         this.path = path;
         this.objectMapper = new ObjectMapper();
         this.output = this.objectMapper.createArrayNode();
@@ -21,6 +21,9 @@ public class StreamingService {
     }
 
 
+    /**
+     * Start the program
+     */
     public void start() {
 
         Reader readData = new Reader(this.path);
