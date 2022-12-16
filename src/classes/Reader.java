@@ -33,8 +33,7 @@ public class Reader {
         }
 
         this.node = this.node.get("users");
-        TypeReference<List<User>> refList = new TypeReference<>() {
-        };
+        TypeReference<List<User>> refList = new TypeReference<>() {};
 
         try {
             users = this.objectMapper.readValue(this.node.traverse(), refList);
@@ -90,4 +89,7 @@ public class Reader {
         return actions;
 
     }
+
+
+
 }

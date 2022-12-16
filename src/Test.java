@@ -112,7 +112,7 @@ public final class Test {
      */
     public static void main(final String[] argv) {
         runTests();
-        //preTestCleanUp();
+        preTestCleanUp();
         System.exit(0);
     }
 
@@ -132,17 +132,22 @@ public final class Test {
         Config config = loadConfig();
         totalScore = config.getCheckstyleScore();
         int manualScore = config.getReadmeScore() + config.getHomeworkDesignScore();
-        //int i = 3;
 
         for (final File testFile : Objects.requireNonNull(TEST_INPUTS_FILE.listFiles())) {
             String testFileName = testFile.getName();
 
-                //preTestCleanUp();
 
-                final String[] testArgv = createTestArgv(testFile);
-                final Future<Object> future = createTimerTask(testArgv);
 
-                runTest(testFileName, config, future);
+
+
+                    preTestCleanUp();
+
+                    final String[] testArgv = createTestArgv(testFile);
+                    final Future<Object> future = createTimerTask(testArgv);
+
+                    runTest(testFileName, config, future);
+
+
 
         }
 

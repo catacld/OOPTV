@@ -21,6 +21,7 @@ public class UnauthenticatedHome implements Page{
         this.destinationPages = new ArrayList<>();
         destinationPages.add("login");
         destinationPages.add("register");
+        destinationPages.add("homepage neautentificat");
 
         this.onPageActions = new ArrayList<>();
     }

@@ -21,6 +21,7 @@ public class RegisterPage implements Page{
     private RegisterPage() {
 
         this.destinationPages = new ArrayList<>();
+        destinationPages.add("register");
 
         this.onPageActions = new ArrayList<>();
         onPageActions.add("register");

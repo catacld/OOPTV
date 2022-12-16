@@ -13,7 +13,6 @@ public class User {
 
     private int tokensCount;
 
-
     private int numFreePremiumMovies;
 
     private List<Movie> purchasedMovies;

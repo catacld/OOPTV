@@ -19,6 +19,7 @@ public class LoginPage implements Page{
     // for anyone using the platform
     private LoginPage() {
         this.destinationPages = new ArrayList<>();
+        destinationPages.add("login");
 
         this.onPageActions = new ArrayList<>();
         onPageActions.add("login");

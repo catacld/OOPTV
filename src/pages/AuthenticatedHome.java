@@ -4,7 +4,6 @@ import classes.Database;
 import classes.Writer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 public class AuthenticatedHome implements Page{
@@ -22,6 +21,7 @@ public class AuthenticatedHome implements Page{
         destinationPages.add("movies");
         destinationPages.add("upgrades");
         destinationPages.add("logout");
+        destinationPages.add("homepage autentificat");
 
         onPageActions = new ArrayList<>();
 
@@ -46,14 +46,14 @@ public class AuthenticatedHome implements Page{
             // else change the page
             switch (destinationPage) {
                 case "movies":
-                    Writer.getInstance().addOutput(null, Database.getInstance().getFilteredMovies(),
+                    Writer.getInstance().addOutput(null, Database.getInstance().getMovieList(),
                             Database.getInstance().getCurrentUser());
                     return new Movies();
                 case "upgrades":
                     return new Upgrades();
                 case "logout":
                     Database.getInstance().setCurrentUser(null);
-                    Database.getInstance().setFilteredMovies(null);
+                    Database.getInstance().setMovieList(null);
                     return UnauthenticatedHome.getInstance();
                 default:
                     return this;

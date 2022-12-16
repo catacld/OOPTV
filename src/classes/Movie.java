@@ -18,7 +18,6 @@ import static java.lang.Math.round;
 
 public class Movie {
 
-    private final DecimalFormat formatter = new DecimalFormat("#0.00");
     private String name;
     private int year;
     private int duration;
@@ -30,10 +29,13 @@ public class Movie {
 
     private Double rating;
 
+    private double ratingSum;
+
     private int numRatings;
 
     public Movie() {
         rating = 0.00;
+        this.ratingSum = 0.00;
     }
 
     // deep-copy constructor
@@ -110,10 +112,7 @@ public class Movie {
     }
 
     public Double getRating() {
-        Double d = 0.00;
-        String str = String.format("%.2f",d);
-        //Double newD = BigDecimal.valueOf(rating).setScale(2, RoundingMode.DOWN).doubleValue();
-        return Double.valueOf(str);
+        return this.rating;
 
 
     }
@@ -140,6 +139,12 @@ public class Movie {
         }
 
         return false;
+    }
+
+    public void rate (Double rating) {
+        this.ratingSum += rating;
+        this.numRatings++;
+        this.rating = ratingSum / numRatings;
     }
 
 }
