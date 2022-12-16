@@ -1,15 +1,14 @@
-package classes;
+package ioclasses;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
+
+import classes.Movie;
+import classes.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,6 @@ public class Writer {
     }
 
     private Writer() {
-        //output.add(objectMapper.convertValue(Database.getInstance().getUsers(), JsonNode.class));
     }
 
     public static Writer getInstance() {
@@ -48,7 +46,7 @@ public class Writer {
         return instance;
     }
 
-    // add the result of an action to the output
+    // add the result of an action to the output node
     public void addOutput(String error, List<Movie> MoviesList, User currentUser) {
         this.error = error;
         this.currentMoviesList = MoviesList;
@@ -56,10 +54,8 @@ public class Writer {
         output.add(objectMapper.convertValue(this, JsonNode.class));
     }
 
-    // write the output to a file
+    // write the output to the file
     public void writeOutput() {
-        // TODO remove this line after you're done
-        //output.add(objectMapper.convertValue("END OF TEST", JsonNode.class));
         try {
             this.objectWriter.writeValue(new File("results.out"), this.output);
             output = objectMapper.createArrayNode();

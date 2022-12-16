@@ -1,20 +1,6 @@
 package classes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.node.DecimalNode;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Formatter;
-
-import static java.lang.Math.round;
-
 
 public class Movie {
 
@@ -113,8 +99,6 @@ public class Movie {
 
     public Double getRating() {
         return this.rating;
-
-
     }
 
     public void setRating(Double rating) {
@@ -129,7 +113,7 @@ public class Movie {
         this.numRatings = numRatings;
     }
 
-    // check if the movies is banned for a
+    // check if the movie is banned for a
     // specific user
     public boolean isBannedForTheUser(String userCountry) {
         for (String country : this.countriesBanned ) {

@@ -1,7 +1,7 @@
 package pages;
 
-import classes.Database;
-import classes.Writer;
+import utilities.CheckAction;
+import ioclasses.Writer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
@@ -45,12 +45,11 @@ public class UnauthenticatedHome implements Page{
 
         // check if the destination page is reachable
         // from the current page
-        boolean valid = canChangePage(destinationPage);
+        boolean valid = CheckAction.canChangePage(destinationPage,destinationPages);
 
         // if it is not print an error
-        // and stay on the same page
+        // stay on the same page
         if (!valid) {
-            Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
             return this;
         } else {
             // else change the page
@@ -66,21 +65,10 @@ public class UnauthenticatedHome implements Page{
     @Override
     public Page onPage(ObjectNode actionDetails) {
 
-        // since there are no "on page" actions that can be done
-        // always write an error
+        // since there are no "on page" actions that can be executed
+        // while on this page, always write an error
         Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         return this;
 
-    }
-
-    // check if the destination page "page" is reachable
-    // from the current page
-    private boolean canChangePage(String page) {
-        for(String destination : destinationPages) {
-            if (destination.equals(page)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

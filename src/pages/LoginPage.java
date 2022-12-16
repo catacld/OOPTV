@@ -1,8 +1,9 @@
 package pages;
 
-import classes.Database;
+import utilities.CheckAction;
+import data.Database;
 import classes.User;
-import classes.Writer;
+import ioclasses.Writer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
@@ -41,8 +42,8 @@ public class LoginPage implements Page{
     // while on the login page
     @Override
     public Page changePage(ObjectNode actionDetails) {
-        // since there are no "change page" actions that can be done
-        // always write an error
+        // since there are no "change page" actions that can be executed
+        // while on this page, always write an error
         Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         return this;
     }
@@ -56,44 +57,39 @@ public class LoginPage implements Page{
 
         // check if the action can be executed while
         // on the login page
-        boolean valid = canExecuteAction(action);
+        boolean valid = CheckAction.canExecuteAction(action,onPageActions);
 
 
         if (!valid) {
             // the action can not be executed
-            //TODO add error output
-            Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
+            return this;
         } else {
             // the action can be executed
 
-            // extract the username and password
+            // extract the login credentials
             String username = actionDetails.get("credentials").get("name").asText();
             String password = actionDetails.get("credentials").get("password").asText();
+
             // check if the login was successful
-            User loggedUser = Database.getInstance().validLogin(username,password);
+            User loggedUser = Database.getInstance().login(username,password);
+
             // write the output based on the action's result
             if (loggedUser != null) {
+
+                // update the logged-in user and the list of
+                // available movies to the user in the database
                 Database.getInstance().setCurrentUser(loggedUser);
                 Database.getInstance().deepCopyFilteredMovies(loggedUser);
                 Writer.getInstance().addOutput(null, new ArrayList<>(), Database.getInstance().getCurrentUser());
                 return new AuthenticatedHome();
             } else {
+                // the login failed
                 Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
                 return UnauthenticatedHome.getInstance();
             }
         }
-        return this;
     }
 
 
-    // check if the "on page" action
-    // can be executed
-    private boolean canExecuteAction(String actionToExecute) {
-        for (String action : onPageActions) {
-            if (action.equals(actionToExecute)) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 }

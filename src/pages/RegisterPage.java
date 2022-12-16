@@ -1,13 +1,12 @@
 package pages;
 
-import classes.Credentials;
-import classes.Database;
-import classes.User;
-import classes.Writer;
+import classes.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import data.Database;
+import ioclasses.Writer;
+import utilities.CheckAction;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 public class RegisterPage implements Page{
@@ -38,8 +37,8 @@ public class RegisterPage implements Page{
 
     @Override
     public Page changePage(ObjectNode actionDetails) {
-        // since there are no "change page" actions that can be done
-        // always write an error
+        // since there are no "change page" actions that can be executed
+        // while on this page, always write an error
         Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         return this;
     }
@@ -51,28 +50,33 @@ public class RegisterPage implements Page{
 
         // check if the action can be executed while
         // on the register page
-        boolean valid = canExecuteAction(action);
+        boolean valid = CheckAction.canExecuteAction(action,onPageActions);
 
         if (!valid) {
-            // the action can not be executed
-            //TODO add error output
-            Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
+            return this;
         } else {
+
             // the action can be executed
+
             // extract the credentials of the new user
             ObjectMapper mapper = new ObjectMapper();
             Credentials userCredentials = mapper.convertValue(actionDetails.get("credentials"),Credentials.class);
 
-
-
             // check if the username is available
             boolean available = Database.getInstance().checkUsernameAvailable(userCredentials.getName());
+
             // write the output based on the action's result
             if (available) {
                 User userToAdd = new User(userCredentials);
+
+                // add a new user to the database
                 Database.getInstance().getUsers().add(userToAdd);
+
+                // update the logged-in user
                 Database.getInstance().setCurrentUser(userToAdd);
                 Database.getInstance().deepCopyFilteredMovies(userToAdd);
+
+                // write the output of the action
                 Writer.getInstance().addOutput(null, new ArrayList<>(), Database.getInstance().getCurrentUser());
                 return new AuthenticatedHome();
             } else {
@@ -80,17 +84,5 @@ public class RegisterPage implements Page{
                 return UnauthenticatedHome.getInstance();
             }
         }
-        return this;
-    }
-
-    // check if we can execute the
-    // "on page" auction
-    private boolean canExecuteAction(String actionToExecute) {
-        for (String action : onPageActions) {
-            if (action.equals(actionToExecute)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

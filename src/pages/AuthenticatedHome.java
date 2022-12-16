@@ -1,7 +1,8 @@
 package pages;
 
-import classes.Database;
-import classes.Writer;
+import utilities.CheckAction;
+import data.Database;
+import ioclasses.Writer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
@@ -34,26 +35,25 @@ public class AuthenticatedHome implements Page{
 
         String destinationPage = actionDetails.get("page").asText();
 
-        // check if the page is reachable
-        boolean valid = canChangePage(destinationPage);
+        // check if the action can be executed while
+        // on this page
+        boolean valid = CheckAction.canChangePage(destinationPage,destinationPages);
 
-        // if it is not print an error
-        // and stay on the same page
+        // the action can not be executed
         if (!valid) {
-            Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
             return this;
         } else {
             // else change the page
             switch (destinationPage) {
                 case "movies":
-                    Writer.getInstance().addOutput(null, Database.getInstance().getMovieList(),
+                    Writer.getInstance().addOutput(null, Database.getInstance().getFilteredMovies(),
                             Database.getInstance().getCurrentUser());
                     return new Movies();
                 case "upgrades":
                     return new Upgrades();
                 case "logout":
                     Database.getInstance().setCurrentUser(null);
-                    Database.getInstance().setMovieList(null);
+                    Database.getInstance().setFilteredMovies(null);
                     return UnauthenticatedHome.getInstance();
                 default:
                     return this;
@@ -64,20 +64,9 @@ public class AuthenticatedHome implements Page{
 
     @Override
     public Page onPage(ObjectNode actionDetails) {
-        // since there are no "on page" actions that can be done
-        // always write an error
+        // since there are no "on page" actions that can be executed
+        // while on this page, always write an error
         Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         return this;
-    }
-
-    // check if the destination "page" is reachable
-    // from the current page
-    private boolean canChangePage(String page) {
-        for(String destination : destinationPages) {
-            if (destination.equals(page)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

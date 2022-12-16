@@ -1,4 +1,4 @@
-package classes;
+package platformlogic;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import pages.Page;
@@ -23,11 +23,11 @@ public class ActionsManager {
             // get the type of the action
             String type = action.get("type").asText();
             switch (type) {
-                // a "change page" action
+                // execute a "change page" action
                 case "change page" -> {
                     currentPage = currentPage.changePage(action);
                 }
-                // an "on page" action
+                // execute an "on page" action
                 case "on page" -> {
                     currentPage = currentPage.onPage(action);
                 }

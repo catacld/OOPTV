@@ -1,16 +1,12 @@
-package classes;
+package platformlogic;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-
-
-import javax.xml.crypto.Data;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import data.Database;
+import ioclasses.Reader;
+import ioclasses.Writer;
 
 public class StreamingService {
     private String path;
@@ -30,7 +26,7 @@ public class StreamingService {
         Reader readData = new Reader(this.path);
         Database database = Database.getInstance();
 
-        // add the list of users and movies in
+        // read and add the list of users and movies to
         // the database
         database.setUsers(readData.readUsers());
         database.setMovies(readData.readMovies());
@@ -38,8 +34,6 @@ public class StreamingService {
         // read the array of actions and execute them
         ActionsManager actionsManager = new ActionsManager(readData.readActions());
         actionsManager.manageActions();
-
-        //output.add(objectMapper.convertValue(database.getUsers(), JsonNode.class));
 
         //write the output to the file
         Writer.getInstance().writeOutput();

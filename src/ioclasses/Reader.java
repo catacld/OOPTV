@@ -1,5 +1,7 @@
-package classes;
+package ioclasses;
 
+import classes.Movie;
+import classes.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +24,8 @@ public class Reader {
         this.objectMapper = new ObjectMapper();
     }
 
+    // read the list of users from the
+    // input file
     public List<User> readUsers() {
 
         List<User> users;
@@ -44,6 +48,8 @@ public class Reader {
         return users;
     }
 
+    // read the list of movies from the
+    // input file
     public List<Movie> readMovies() {
 
         List<Movie> movies;
@@ -67,6 +73,8 @@ public class Reader {
         return movies;
     }
 
+    // read the list of actions from the
+    // input file
     public List<ObjectNode> readActions() {
 
         List<ObjectNode> actions;
