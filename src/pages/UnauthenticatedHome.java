@@ -1,5 +1,6 @@
 package pages;
 
+import factory.Factory;
 import utilities.CheckAction;
 import ioclasses.Writer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -57,17 +58,13 @@ public final class UnauthenticatedHome implements Page {
         // from the current page
         boolean valid = CheckAction.canChangePage(destinationPage, destinationPages);
 
-        // if it is not print an error
-        // stay on the same page
+        // if it is not stay on the
+        // same page
         if (!valid) {
             return this;
         } else {
             // else change the page
-            return switch (destinationPage) {
-                case "login" -> LoginPage.getInstance();
-                case "register" -> RegisterPage.getInstance();
-                default -> this;
-            };
+            return Factory.newPage(destinationPage);
         }
 
     }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import data.Database;
+import factory.Factory;
 import ioclasses.Writer;
 import utilities.CheckAction;
 import utilities.FilterMovies;
@@ -55,44 +56,27 @@ public class Movies implements Page {
         } else {
             // the destination is reachable
 
-            switch (destinationPage) {
-                case "see details" -> {
-                    String movie = actionDetails.get("movie").asText();
-                    if (Database.getInstance().getMovie(Database.getInstance().getFilteredMovies(),
-                                                        movie) == null) {
-                        // the movie is not available for the current user
-                        Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
-                        return this;
-                    } else {
-                        // write the output of the action
-                        List<Movie> movieToPrint = new ArrayList<>();
-                        movieToPrint.add(Database.getInstance().getMovie(
-                                         Database.getInstance().getFilteredMovies(), movie));
-                        Writer.getInstance().addOutput(null,
-                                movieToPrint, Database.getInstance().getCurrentUser());
-                        return new SeeDetails(Database.getInstance().getMovie(
-                                    Database.getInstance().getFilteredMovies(), movie));
-                    }
-                }
-                case "homepage autentificat" -> {
-                    Writer.getInstance().addOutput(null, new ArrayList<>(),
-                                                    Database.getInstance().getCurrentUser());
-                    return new AuthenticatedHome();
-                }
-                case "logout" -> {
-                    Database.getInstance().setCurrentUser(null);
-                    Database.getInstance().setFilteredMovies(null);
-                    return UnauthenticatedHome.getInstance();
-                }
-                default -> {
-                    // reset the filtered list when changing page
-                    Database.getInstance().deepCopyFilteredMovies(
-                            Database.getInstance().getCurrentUser());
-                    Writer.getInstance().addOutput(null, Database.getInstance().getFilteredMovies(),
-                            Database.getInstance().getCurrentUser());
+            // for convenience this case will be
+            // treated separately
+            if ("see details".equals(destinationPage)) {
+                String movie = actionDetails.get("movie").asText();
+                if (Database.getInstance().getMovie(Database.getInstance().getFilteredMovies(),
+                        movie) == null) {
+                    // the movie is not available for the current user
+                    Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
                     return this;
+                } else {
+                    // write the output of the action
+                    List<Movie> movieToPrint = new ArrayList<>();
+                    movieToPrint.add(Database.getInstance().getMovie(
+                            Database.getInstance().getFilteredMovies(), movie));
+                    Writer.getInstance().addOutput(null,
+                            movieToPrint, Database.getInstance().getCurrentUser());
+                    return new SeeDetails(Database.getInstance().getMovie(
+                            Database.getInstance().getFilteredMovies(), movie));
                 }
             }
+            return Factory.newPage(destinationPage);
         }
     }
 

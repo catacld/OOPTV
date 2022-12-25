@@ -1,10 +1,10 @@
 package pages;
 
 import classes.User;
+import factory.Factory;
 import utilities.CheckAction;
 import data.Database;
 import classes.Movie;
-import ioclasses.Writer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
@@ -59,35 +59,7 @@ public class SeeDetails implements Page {
             return this;
         } else {
             // the destination is reachable
-
-            switch (destinationPage) {
-                case "movies" -> {
-
-                    // reset the filtered list when the page changes
-                    Database.getInstance().deepCopyFilteredMovies(
-                            Database.getInstance().getCurrentUser());
-
-                    Writer.getInstance().addOutput(null, Database.getInstance().getFilteredMovies(),
-                            Database.getInstance().getCurrentUser());
-                    return new Movies();
-                }
-                case "upgrades" -> {
-                    return new Upgrades();
-                }
-                case "homepage autentificat" -> {
-                    Writer.getInstance().addOutput(null, new ArrayList<>(),
-                                                   Database.getInstance().getCurrentUser());
-                    return new AuthenticatedHome();
-                }
-                case "logout" -> {
-                    Database.getInstance().setCurrentUser(null);
-                    Database.getInstance().setFilteredMovies(null);
-                    return UnauthenticatedHome.getInstance();
-                }
-                default -> {
-                    return this;
-                }
-            }
+            return Factory.newPage(destinationPage);
         }
     }
 
