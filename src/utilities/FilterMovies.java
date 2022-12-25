@@ -2,8 +2,7 @@ package utilities;
 
 import classes.Movie;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class FilterMovies {
@@ -84,44 +83,40 @@ public class FilterMovies {
                                          final String durationOrder,
                                          final String ratingOrder) {
 
-        // classic bubble-sort when sorting by both parameters
-
-        for (int i = 0; i < moviesList.size() - 1; i++) {
-            for (int j = i + 1; j < moviesList.size(); j++) {
-
-                if (durationOrder.equals("decreasing")) {
-
-                    if (moviesList.get(i).getDuration()
-                            < moviesList.get(j).getDuration()) {
-                        Collections.swap(moviesList, i, j);
-                    } else if (moviesList.get(i).getDuration() == moviesList.get(j).getDuration()) {
-                        if (ratingOrder.equals("increasing")
-                                && moviesList.get(i).getRating()
-                                > moviesList.get(j).getRating()) {
-                            Collections.swap(moviesList, i, j);
-                        } else if (ratingOrder.equals("decreasing")
-                                && moviesList.get(i).getRating()
-                                < moviesList.get(j).getRating()) {
-                            Collections.swap(moviesList, i, j);
-                        }
+        // sort by increasing duration
+        if (durationOrder.equals("increasing")) {
+            moviesList.sort((o1, o2) -> {
+                // if the movies are equal by duration
+                // sort by rating
+                if (o1.getDuration() == o2.getDuration()) {
+                    if (ratingOrder.equals("increasing")) {
+                        // sort by increasing rating
+                        return (int) (o1.getRating() - o2.getRating());
+                    } else {
+                        // sort by decreasing rating
+                        return (int) (-1 * (o1.getRating() - o2.getRating()));
                     }
-                } else if (durationOrder.equals("increasing")) {
-                    if (moviesList.get(i).getDuration()
-                            > moviesList.get(j).getDuration()) {
-                        Collections.swap(moviesList, i, j);
-                    } else if (moviesList.get(i).getDuration() == moviesList.get(j).getDuration()) {
-                        if (ratingOrder.equals("increasing")
-                                && moviesList.get(i).getRating()
-                                > moviesList.get(j).getRating()) {
-                            Collections.swap(moviesList, i, j);
-                        } else if (ratingOrder.equals("decreasing")
-                                && moviesList.get(i).getRating()
-                                < moviesList.get(j).getRating()) {
-                            Collections.swap(moviesList, i, j);
-                        }
-                    }
+                } else {
+                    return o1.getDuration() - o2.getDuration();
                 }
-            }
+            });
+        } else {
+            // sort by decreasing duration
+            moviesList.sort((o1, o2) -> {
+                // if the movies are equal by duration
+                // sort by rating
+                if (o1.getDuration() == o2.getDuration()) {
+                    if (ratingOrder.equals("increasing")) {
+                        // sort by increasing rating
+                        return (int) (o1.getRating() - o2.getRating());
+                    } else {
+                        // sort by decreasing rating
+                        return (int) (-1 * (o1.getRating() - o2.getRating()));
+                    }
+                } else {
+                    return (-1) * (o1.getDuration() - o2.getDuration());
+                }
+            });
         }
 
         return moviesList;
@@ -139,15 +134,14 @@ public class FilterMovies {
     public static List<Movie> sortByRating(final List<Movie> moviesList,
                                            final String ratingOrder) {
 
-        Movie[] moviesArray = new Movie[moviesList.size()];
-
-        for (int y = 0; y < moviesList.size(); y++) {
-            moviesArray[y] = moviesList.get(y);
+        if (ratingOrder.equals("increasing")) {
+            moviesList.sort((o1, o2) -> (int) (o1.getRating() - o2.getRating()));
+        } else {
+            moviesList.sort((o1, o2) -> (int) (-1 * (o1.getRating() - o2.getRating())));
         }
 
-        mergeSort(moviesArray, "rating", ratingOrder);
+        return moviesList;
 
-        return Arrays.asList(moviesArray);
     }
 
 
@@ -160,106 +154,15 @@ public class FilterMovies {
      */
     public static List<Movie> sortByDuration(final List<Movie> moviesList,
                                              final String durationOrder) {
-        Movie[] moviesArray = new Movie[moviesList.size()];
 
-        for (int y = 0; y < moviesList.size(); y++) {
-            moviesArray[y] = moviesList.get(y);
-        }
-
-        mergeSort(moviesArray, "duration", durationOrder);
-
-        return Arrays.asList(moviesArray);
-
-    }
-
-    private static void mergeSort(final Movie[] a,
-                                  final String sortBy,
-                                  final String order) {
-        if (a.length < 2) {
-            return;
-        }
-        int mid = a.length / 2;
-        Movie[] l = new Movie[mid];
-        Movie[] r = new Movie[a.length - mid];
-
-        for (int i = 0; i < mid; i++) {
-            l[i] = a[i];
-        }
-        for (int i = mid; i < a.length; i++) {
-            r[i - mid] = a[i];
-        }
-
-        mergeSort(l, sortBy, order);
-        mergeSort(r, sortBy, order);
-
-        if (sortBy.equals("duration")) {
-            mergeSortDuration(a, l, r, mid, a.length - mid, order);
+        if (durationOrder.equals("increasing")) {
+            moviesList.sort(Comparator.comparingInt(Movie::getDuration));
         } else {
-            mergeSortRating(a, l, r, mid, a.length - mid, order);
+            moviesList.sort((o1, o2) -> -1 * (o1.getDuration() - o2.getDuration()));
         }
 
+        return moviesList;
 
-
-    }
-
-    private static void mergeSortRating(
-            final Movie[] a, final Movie[] l, final Movie[] r,
-            final int left, final int right, final String order) {
-
-        int i = 0, j = 0, k = 0;
-
-        while (i < left && j < right) {
-            if (order.equals("increasing")) {
-                if (l[i].getRating() <= r[j].getRating()) {
-                    a[k++] = l[i++];
-                } else {
-                    a[k++] = r[j++];
-                }
-            } else {
-                if (l[i].getRating() >= r[j].getRating()) {
-                    a[k++] = l[i++];
-                } else {
-                    a[k++] = r[j++];
-                }
-            }
-
-        }
-        while (i < left) {
-            a[k++] = l[i++];
-        }
-        while (j < right) {
-            a[k++] = r[j++];
-        }
-    }
-
-    private static void mergeSortDuration(
-            final Movie[] a, final Movie[] l, final Movie[] r,
-            final int left, final int right, final String order) {
-
-        int i = 0, j = 0, k = 0;
-
-        while (i < left && j < right) {
-            if (order.equals("increasing")) {
-                if (l[i].getDuration() <= r[j].getDuration()) {
-                    a[k++] = l[i++];
-                } else {
-                    a[k++] = r[j++];
-                }
-            } else {
-                if (l[i].getDuration() >= r[j].getDuration()) {
-                    a[k++] = l[i++];
-                } else {
-                    a[k++] = r[j++];
-                }
-            }
-
-        }
-        while (i < left) {
-            a[k++] = l[i++];
-        }
-        while (j < right) {
-            a[k++] = r[j++];
-        }
     }
 
 

@@ -9,6 +9,6 @@ Starting audit...
 [ERROR] E:\java_projects\ooptv_stage1\proiect1\.\src\pages\Upgrades.java:126:65: '10' is a magic number. [MagicNumber]
 [ERROR] E:\java_projects\ooptv_stage1\proiect1\.\src\Test.java:9:28: Using the '.*' form of import should be avoided - java.util.concurrent.*. [AvoidStarImport]
 [ERROR] E:\java_projects\ooptv_stage1\proiect1\.\src\utilities\CheckAction.java:7:1: Utility classes should not have a public or default constructor. [HideUtilityClassConstructor]
-[ERROR] E:\java_projects\ooptv_stage1\proiect1\.\src\utilities\FilterMovies.java:9:1: Utility classes should not have a public or default constructor. [HideUtilityClassConstructor]
+[ERROR] E:\java_projects\ooptv_stage1\proiect1\.\src\utilities\FilterMovies.java:8:1: Utility classes should not have a public or default constructor. [HideUtilityClassConstructor]
 Audit done.
 Checkstyle ends with 11 errors.
