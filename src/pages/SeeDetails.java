@@ -1,5 +1,6 @@
 package pages;
 
+import classes.User;
 import utilities.CheckAction;
 import data.Database;
 import classes.Movie;
@@ -7,15 +8,15 @@ import ioclasses.Writer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class SeeDetails implements Page {
 
     private final Movie movie;
 
-    private ArrayList<String> destinationPages;
+    private final ArrayList<String> destinationPages;
 
-    private ArrayList<String> onPageActions;
+    private final ArrayList<String> onPageActions;
 
 
 
@@ -111,117 +112,39 @@ public class SeeDetails implements Page {
         } else {
             // the action can be executed
 
+            // get the user that is currently
+            // logged in
+            User currentUser = Database.getInstance().getCurrentUser();
+
             switch (action) {
                 case "purchase" -> {
-                    // add the movie to the user's purchased movied
-                    Database.getInstance().getCurrentUser().getPurchasedMovies().add(this.movie);
 
-                    // check if the user is premium and has any free movies left
-                    if (Database.getInstance().getCurrentUser().
-                            getCredentials().getAccountType().equals("premium")
-                            && Database.getInstance().getCurrentUser().
-                            getNumFreePremiumMovies() != 0) {
-                        Database.getInstance().getCurrentUser().setNumFreePremiumMovies(
-                                Database.getInstance().getCurrentUser().
-                                        getNumFreePremiumMovies() - 1);
-                    } else {
-                        // if not then substract 2 tokens for the movie
-                        Database.getInstance().getCurrentUser().setTokensCount(
-                                Database.getInstance().getCurrentUser().getTokensCount() - 2);
-                    }
-
-                    // write the output to the file
-                    List<Movie> movieToPrint = new ArrayList<>();
-                    movieToPrint.add(this.movie);
-                    Writer.getInstance().addOutput(null,
-                            movieToPrint, Database.getInstance().getCurrentUser());
+                    //purchase the movie
+                    currentUser.purchase(movie);
 
                     return this;
                 }
                 case "watch" -> {
 
-                    // check if the movie has been purchased
-                    if (Database.getInstance().getMovie(Database.getInstance().getCurrentUser().
-                            getPurchasedMovies(), this.movie.getName()) != null) {
-                        // add the movie to the user's watched list
-                        Database.getInstance().getCurrentUser().getWatchedMovies().add(this.movie);
+                    // watch the movie
+                    currentUser.watch(movie);
 
-                        // write the output
-                        List<Movie> movieToPrint = new ArrayList<>();
-                        movieToPrint.add(this.movie);
-                        Writer.getInstance().addOutput(null,
-                                movieToPrint, Database.getInstance().getCurrentUser());
-                    } else {
-                        // the movie has not been purchased
-                        // write an error
-                        Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
-                    }
                     return this;
                 }
                 case "like" -> {
-                    // check if the movie has been watched
-                    if (Database.getInstance().getMovie(Database.getInstance().getCurrentUser().
-                            getWatchedMovies(), this.movie.getName()) != null) {
 
-                        // add the movie to the user's liked list
-                        Database.getInstance().getCurrentUser().getLikedMovies().add(this.movie);
+                    //like the movie
+                    currentUser.like(movie);
 
-                        // increase the movie's number of likes
-                        this.movie.setNumLikes(this.movie.getNumLikes() + 1);
-
-
-                        // update the movie's number of likes in the global list
-                        Movie universalMovie = Database.getInstance().getMovie(Database.
-                                getInstance().getMovies(), this.movie.getName());
-                        universalMovie.setNumLikes(universalMovie.getNumLikes() + 1);
-
-                        // write the output
-                        List<Movie> movieToPrint = new ArrayList<>();
-                        movieToPrint.add(this.movie);
-                        Writer.getInstance().addOutput(null,
-                                movieToPrint, Database.getInstance().getCurrentUser());
-
-                    } else {
-                        // the movie has not been watched
-                        // write an error
-                        Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
-                    }
                     return this;
                 }
                 case "rate" -> {
 
-                    // check if the movie has been watched
-                    if (Database.getInstance().getMovie(Database.getInstance().getCurrentUser().
-                            getWatchedMovies(), this.movie.getName()) != null) {
+                    String rating = actionDetails.get("rate").asText();
 
-                        String rating = actionDetails.get("rate").asText();
+                    // rate the movie
+                    currentUser.rate(movie, Double.parseDouble(rating));
 
-                        // check if the rating is between 1 and 5
-                        if (Double.parseDouble(rating) > 5 || Double.parseDouble(rating) < 1) {
-                            Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
-                        } else {
-                            // add the movie to the user's liked list
-                            Database.getInstance().getCurrentUser().getRatedMovies().
-                                    add(this.movie);
-
-                            // rate the movie in the user's list
-                            this.movie.rate(Double.valueOf(rating));
-
-                            // rate the movie in the global list
-                            Movie universalMovie = Database.getInstance().getMovie(
-                                    Database.getInstance().getMovies(), this.movie.getName());
-                            universalMovie.rate(Double.valueOf(rating));
-
-                            // write the output
-                            List<Movie> movieToPrint = new ArrayList<>();
-                            movieToPrint.add(this.movie);
-                            Writer.getInstance().addOutput(null,
-                                    movieToPrint, Database.getInstance().getCurrentUser());
-                        }
-                    } else {
-                        // the movie has not been watched
-                        Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
-                    }
                     return this;
                 }
                 default -> {
