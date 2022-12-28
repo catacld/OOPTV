@@ -1,11 +1,17 @@
 package classes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import data.Database;
+import genres.Action;
+import genres.Comedy;
+import genres.Crime;
+import genres.Thriller;
 import ioclasses.Writer;
+import utilities.CheckAction;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Objects;
 
 
 public class User {
@@ -23,12 +29,19 @@ public class User {
 
     private List<Movie> ratedMovies;
 
+    private List<Notification> notifications;
+
+    @JsonIgnore
+    private List<String> subscribedGenres;
+
     public User(final Credentials credentials) {
         this.credentials = credentials;
         purchasedMovies = new ArrayList<>();
         watchedMovies = new ArrayList<>();
         likedMovies = new ArrayList<>();
         ratedMovies = new ArrayList<>();
+        notifications = new ArrayList<>();
+        subscribedGenres = new ArrayList<>();
         numFreePremiumMovies = 15;
     }
 
@@ -37,6 +50,8 @@ public class User {
         watchedMovies = new ArrayList<>();
         likedMovies = new ArrayList<>();
         ratedMovies = new ArrayList<>();
+        notifications = new ArrayList<>();
+        subscribedGenres = new ArrayList<>();
         numFreePremiumMovies = 15;
     }
 
@@ -96,7 +111,25 @@ public class User {
         this.ratedMovies = ratedMovies;
     }
 
+    public List<Notification> addNotification() {
+        return notifications;
+    }
 
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
+    public List<String> getSubscribedGenres() {
+        return subscribedGenres;
+    }
+
+    public void setSubscribedGenres(List<String> subscribedGenres) {
+        this.subscribedGenres = subscribedGenres;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
 
     /**
      * Purchase the movie given as a parameter
@@ -205,7 +238,7 @@ public class User {
                 Movie universalMovie = Database.getInstance().getMovie(
                         Database.getInstance().getMovies(), movie.getName());
                 assert universalMovie != null;
-                universalMovie.rate(rating);
+                //universalMovie.rate(rating);
 
                 // write the output
                 List<Movie> movieToPrint = new ArrayList<>();
@@ -225,5 +258,67 @@ public class User {
         } else {
             return (numFreePremiumMovies != 0);
         }
+    }
+
+    public void subscribe(String genre) {
+
+        if (!CheckAction.canSubscribe(this, Database.getInstance().getCurrentMovie(), genre)) {
+            Writer.getInstance().addOutput("Error", new ArrayList<>(),
+                    null);
+        } else {
+            this.subscribedGenres.add(genre);
+            switch (genre) {
+                case "Action" : {
+                    Action.addSubscriber(this);
+                }
+                case "Comedy" : {
+                    Comedy.addSubscriber(this);
+                }
+                case "Crime" : {
+                    Crime.addSubscriber(this);
+                }
+                case "Thriller" : {
+                    Thriller.addSubscriber(this);
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return tokensCount == user.tokensCount && numFreePremiumMovies == user.numFreePremiumMovies && Objects.equals(credentials, user.credentials) && Objects.equals(purchasedMovies, user.purchasedMovies) && Objects.equals(watchedMovies, user.watchedMovies) && Objects.equals(likedMovies, user.likedMovies) && Objects.equals(ratedMovies, user.ratedMovies) && Objects.equals(notifications, user.notifications) && Objects.equals(subscribedGenres, user.subscribedGenres);
+    }
+
+    public void addNotification(Notification notification) {
+        if (!this.alreadyNotified(notification)) {
+            notifications.add(notification);
+        }
+    }
+
+
+    // check if the user has already been notified
+    // of the addition of a new movie
+    private boolean alreadyNotified(Notification notification) {
+        for (Notification n : notifications) {
+            if (n.equals(notification)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasMovie(Movie movie) {
+        return purchasedMovies.contains(movie);
+    }
+
+    public void deleteMovie(Movie movie) {
+        purchasedMovies.remove(movie);
+        watchedMovies.remove(movie);
+        likedMovies.remove(movie);
+        ratedMovies.remove(movie);
     }
 }

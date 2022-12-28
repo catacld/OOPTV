@@ -97,7 +97,7 @@ public final class Test {
 
     private static final File CONFIG_FILE = new File(CHECKER_RESOURCES_FOLDER + "config.json");
 
-    private static final int MAX_MILLISECONDS_PER_TEST = 1000;
+    private static final int MAX_MILLISECONDS_PER_TEST = 100;
 
     private static int score = 0;
     private static int totalScore = 0;
@@ -112,12 +112,13 @@ public final class Test {
      */
     public static void main(final String[] argv) {
         runTests();
-        preTestCleanUp();
+        //preTestCleanUp();
         System.exit(0);
     }
 
     private static Config loadConfig() {
         ObjectMapper objectMapper = new ObjectMapper();
+
         try {
             return objectMapper.readValue(CONFIG_FILE, Config.class);
         } catch (IOException e) {
@@ -132,19 +133,25 @@ public final class Test {
         Config config = loadConfig();
         totalScore = config.getCheckstyleScore();
         int manualScore = config.getReadmeScore() + config.getHomeworkDesignScore();
+        int i = 1;
 
         for (final File testFile : Objects.requireNonNull(TEST_INPUTS_FILE.listFiles())) {
-            String testFileName = testFile.getName();
 
-            preTestCleanUp();
+            if (i <= 10) {
+                String testFileName = testFile.getName();
 
-            final String[] testArgv = createTestArgv(testFile);
-            final Future<Object> future = createTimerTask(testArgv);
+                preTestCleanUp();
 
-            runTest(testFileName, config, future);
+                final String[] testArgv = createTestArgv(testFile, testFileName);
+                final Future<Object> future = createTimerTask(testArgv);
+
+                runTest(testFileName, config, future);
+                i++;
+            }
         }
 
         score += Checkstyle.testCheckstyle();
+
         System.out.println("Total score: .......................... " + score + "/" + totalScore);
         System.out.println("Up to "
                 + manualScore
@@ -153,16 +160,12 @@ public final class Test {
         System.out.println("This value can be exceeded for great implementations.");
     }
 
-    private static void runTest(
-            final String testFileName,
-            final Config config,
-            final Future<Object> task
-    ) {
+    private static void runTest(final String testFileName, final Config config, final Future<Object> task) {
         ObjectMapper objectMapper = new ObjectMapper();
         File refFile = new File(CHECKER_RESOURCES_FOLDER + REF_FOLDER + testFileName);
 
         try {
-            task.get(MAX_MILLISECONDS_PER_TEST, TimeUnit.MILLISECONDS);
+            task.get(MAX_MILLISECONDS_PER_TEST, TimeUnit.MINUTES);
         } catch (TimeoutException e) {
             printMessage(testFileName, "Timeout");
             return;
@@ -205,7 +208,7 @@ public final class Test {
         return executor.submit(task);
     }
 
-    private static String[] createTestArgv(final File testFile) {
+    private static String[] createTestArgv(final File testFile, String testFileName) {
         List<String> listArgv = new ArrayList<>();
         listArgv.add(testFile.getAbsolutePath());
         listArgv.add(OUT_FILE);
@@ -217,18 +220,11 @@ public final class Test {
         TEST_OUT_FILE.delete();
     }
 
-    private static void printMessage(
-            final String testFileName,
-            final String message
-    ) {
+    private static void printMessage(final String testFileName, final String message) {
         printMessage(testFileName, message, false);
     }
 
-    private static void printMessage(
-            final String testFileName,
-            final String message,
-            final boolean trail
-    ) {
+    private static void printMessage(final String testFileName, final String message, final boolean trail) {
         String fileName = testFileName.split("\\.")[0];
         if (trail) {
             System.out.println("[" + fileName + "]: ..................... " + message);
@@ -237,10 +233,7 @@ public final class Test {
         }
     }
 
-    private static int testMaxScore(
-            final Config config,
-            final String testFileName
-    ) {
+    private static int testMaxScore(final Config config, final String testFileName) {
         for (TestType testType : config.getTestTypes()) {
             if (testFileName.contains(testType.getType())) {
                 return testType.getScore();

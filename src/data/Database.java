@@ -1,8 +1,20 @@
 package data;
 
 import classes.Movie;
+import classes.Notification;
 import classes.User;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import genres.Action;
+import genres.Comedy;
+import genres.Crime;
+import genres.Thriller;
+import ioclasses.Writer;
+import pages.Page;
 
+
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +35,22 @@ public final class Database {
     // the logged-in user
     private User currentUser;
 
+    // the movie whose "see details"
+    // page the user is currently
+    // viewing
+    private Movie currentMovie;
+
+    // the list of pages the user has
+    // navigated on
+    private ArrayDeque<String> history;
+
+    // auxiliary list for when the user goes
+    // back to a "see details" page
+    private ArrayDeque<String> movieTitles;
+
     private Database() {
+        history = new ArrayDeque<>();
+        movieTitles = new ArrayDeque<>();
     }
 
     /**
@@ -109,6 +136,29 @@ public final class Database {
         this.filteredMovies = filteredMovies;
     }
 
+    public ArrayDeque<String> getHistory() {
+        return history;
+    }
+
+    public void setHistory(ArrayDeque<String> history) {
+        this.history = history;
+    }
+
+    public ArrayDeque<String> getMovieTitles() {
+        return movieTitles;
+    }
+
+    public void setMovieTitles(ArrayDeque<String> movieTitles) {
+        this.movieTitles = movieTitles;
+    }
+
+    public Movie getCurrentMovie() {
+        return currentMovie;
+    }
+
+    public void setCurrentMovie(Movie currentMovie) {
+        this.currentMovie = currentMovie;
+    }
 
     /**
      * Deep-copy the list of available movies
@@ -140,6 +190,84 @@ public final class Database {
 
         return null;
     }
+
+    public void addMovie(final JsonNode addedMovie) {
+
+        JsonNode movieData = addedMovie.get("addedMovie");
+        ObjectMapper mapper = new ObjectMapper();
+        Movie movie = mapper.convertValue(movieData, Movie.class);
+
+        // the movie already exists in the database
+        if (this.getMovie(this.movies, movie.getName()) != null) {
+            Writer.getInstance().addOutput("Error", new ArrayList<>(),
+                    null);
+        } else {
+            // the movie does not exist in the database
+
+            // add the movie to the database
+            movies.add(movie);
+
+            // notify the users
+
+            for (String genre: movie.getGenres()) {
+                switch (genre) {
+                    case "Action" : {
+                        Action.notify(movie.getName());
+                    }
+                    case "Comedy" : {
+                        Comedy.notify(movie.getName());
+                    }
+                    case "Crime" : {
+                        Crime.notify(movie.getName());
+                    }
+                    case "Thriller" : {
+                        Thriller.notify(movie.getName());
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void removeMovie(final ObjectNode addedMovie) {
+
+        String movieTitle = addedMovie.get("deletedMovie").asText();
+        Movie movie = getMovie(movies, movieTitle);
+
+        // the movie does not exist in the database
+        if (getMovie(movies, movie.getName()) == null) {
+            Writer.getInstance().addOutput("Error", new ArrayList<>(),
+                    null);
+        } else {
+            for (User user : users) {
+                if (user.hasMovie(movie)) {
+                    // delete the movie from the database
+                    movies.remove(movie);
+                    // refund the user
+                    refund(user);
+                    // delete the movie from the user's
+                    // list of movies
+                    user.deleteMovie(movie);
+                    // notify the user of the deletion
+                    // of the movie
+                    Notification notification = new Notification(movie.getName(), "DELETE");
+                    user.addNotification(notification);
+                }
+            }
+            movies.remove(movie);
+        }
+
+
+    }
+
+    private void refund (User user) {
+        if (user.getCredentials().getAccountType().equals("standard")) {
+            user.setTokensCount(user.getTokensCount() + 2);
+        } else {
+            user.setNumFreePremiumMovies(user.getNumFreePremiumMovies() + 1);
+        }
+    }
+
 
 
 

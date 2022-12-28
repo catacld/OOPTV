@@ -1,8 +1,12 @@
 package utilities;
 
+import classes.Movie;
+import classes.User;
+import data.Database;
 import ioclasses.Writer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CheckAction {
 
@@ -16,8 +20,8 @@ public class CheckAction {
      *                         destination pages
      * @return true if possible, else false
      */
-        public static boolean canChangePage(final String page,
-                                            final ArrayList<String> destinationPages) {
+    public static boolean canChangePage(final String page,
+                                        final ArrayList<String> destinationPages) {
         for (String destination : destinationPages) {
             if (destination.equals(page)) {
                 return true;
@@ -51,5 +55,17 @@ public class CheckAction {
         // and return false
         Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         return false;
+    }
+
+    public static boolean canGoBack() {
+
+        return (Database.getInstance().getCurrentUser() != null &&
+                Database.getInstance().getHistory().size() >= 2);
+    }
+
+    public static boolean canSubscribe(User user, Movie movie, String genre) {
+        return !(user.getSubscribedGenres().contains(genre) ||
+                Database.getInstance().getCurrentMovie() == null ||
+                !movie.getGenres().contains(genre));
     }
 }
