@@ -20,4 +20,14 @@ public interface Page {
      * @return the same page
      */
     Page onPage(ObjectNode actionDetails);
+
+
+    /**
+     * Will print the output of the action based on the
+     * parameter given
+     * @param code 0 - print nothing
+     *             1 - print normal output
+     *             2 - print error
+     */
+    void printMessage(int code);
 }

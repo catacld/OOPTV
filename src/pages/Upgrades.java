@@ -1,6 +1,7 @@
 package pages;
 
 import factory.Factory;
+import ioclasses.Writer;
 import utilities.CheckAction;
 import data.Database;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -9,9 +10,9 @@ import java.util.ArrayList;
 
 public class Upgrades implements Page {
 
-    private ArrayList<String> destinationPages;
+    private final ArrayList<String> destinationPages;
 
-    private ArrayList<String> onPageActions;
+    private final ArrayList<String> onPageActions;
 
     public Upgrades() {
 
@@ -111,6 +112,22 @@ public class Upgrades implements Page {
                     return this;
                 }
             }
+        }
+    }
+
+    /**
+     * Will print the output of the action based on the
+     * parameter given
+     * @param code 0 - prints nothing
+     *             1 - prints normal output
+     *             2 - prints error
+     */
+
+    @Override
+    public void printMessage(int code) {
+
+        if (code == 2) {
+            Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         }
     }
 

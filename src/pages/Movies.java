@@ -16,9 +16,9 @@ import java.util.List;
 
 public class Movies implements Page {
 
-    private ArrayList<String> destinationPages;
+    private final ArrayList<String> destinationPages;
 
-    private ArrayList<String> onPageActions;
+    private final ArrayList<String> onPageActions;
 
     public Movies() {
 
@@ -56,27 +56,14 @@ public class Movies implements Page {
         } else {
             // the destination is reachable
 
-            // for convenience this case will be
-            // treated separately
+            // this case will be treated separately
+            // since it needs one more parameter
             if ("see details".equals(destinationPage)) {
                 String movie = actionDetails.get("movie").asText();
-                if (Database.getInstance().getMovie(Database.getInstance().getFilteredMovies(),
-                        movie) == null) {
-                    // the movie is not available for the current user
-                    Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
-                    return this;
-                } else {
-                    // write the output of the action
-                    List<Movie> movieToPrint = new ArrayList<>();
-                    movieToPrint.add(Database.getInstance().getMovie(
-                            Database.getInstance().getFilteredMovies(), movie));
-                    Writer.getInstance().addOutput(null,
-                            movieToPrint, Database.getInstance().getCurrentUser());
-                    return new SeeDetails(Database.getInstance().getMovie(
-                            Database.getInstance().getFilteredMovies(), movie));
-                }
+                return Factory.newSeeDetailsPage(movie);
+            } else {
+                return Factory.newPage(destinationPage);
             }
-            return Factory.newPage(destinationPage);
         }
     }
 
@@ -202,5 +189,25 @@ public class Movies implements Page {
         }
     }
 
+
+    /**
+     * Will print the output of the action based on the
+     * parameter given
+     * @param code 0 - prints nothing
+     *             1 - prints normal output
+     *             2 - prints error
+     */
+    @Override
+    public void printMessage(int code) {
+
+        if (code == 1) {
+            Writer.getInstance().addOutput(null, Database.getInstance().getFilteredMovies(),
+                        Database.getInstance().getCurrentUser());
+        } else if (code == 2) {
+            Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
+        }
+
+
+    }
 
 }

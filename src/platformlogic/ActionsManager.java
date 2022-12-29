@@ -1,23 +1,28 @@
 package platformlogic;
 
 
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import data.Database;
 import pages.Page;
 import pages.UnauthenticatedHome;
-
+import utilities.GoBack;
 
 
 import java.util.List;
 
 public class ActionsManager {
 
-    private List<ObjectNode> actions;
-    private Page currentPage;
+    private final List<ObjectNode> actions;
+    private static Page currentPage;
 
     public ActionsManager(final List<ObjectNode> actions) {
         this.actions = actions;
-        this.currentPage = UnauthenticatedHome.getInstance();
+        currentPage = UnauthenticatedHome.getInstance();
+    }
+
+    public static Page getCurrentPage() {
+        return currentPage;
     }
 
     /**
@@ -38,11 +43,6 @@ public class ActionsManager {
                 case "on page" -> {
                     currentPage = currentPage.onPage(action);
                 }
-//                case "back" -> {
-//                    if (GoBack.back() != null) {
-//                        currentPage = GoBack.back();
-//                    }
-//                }
                 // subscribe to a genre
                 case "subscribe" -> {
                     String genre = action.get("subscribedGenre").asText();
@@ -55,6 +55,14 @@ public class ActionsManager {
                         Database.getInstance().addMovie(action);
                     } else {
                         Database.getInstance().removeMovie(action);
+                    }
+                }
+                case "back" -> {
+                    Page previousPage = GoBack.back();
+
+                    if (previousPage != null) {
+                        currentPage = previousPage;
+                        currentPage.printMessage(1);
                     }
                 }
                 default -> {

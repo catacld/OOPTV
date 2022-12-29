@@ -9,9 +9,9 @@ import java.util.ArrayList;
 
 public class AuthenticatedHome implements Page {
 
-    private ArrayList<String> destinationPages;
+    private final ArrayList<String> destinationPages;
 
-    private ArrayList<String> onPageActions;
+    private final ArrayList<String> onPageActions;
 
 
 
@@ -68,5 +68,21 @@ public class AuthenticatedHome implements Page {
         // while on this page, always write an error
         Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         return this;
+    }
+
+    /**
+     * Will print the output of the action based on the
+     * parameter given
+     * @param code 0 - prints nothing
+     *             1 - prints normal output
+     *             2 - prints error
+     */
+
+    @Override
+    public void printMessage(int code) {
+
+        if (code == 2) {
+            Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
+        }
     }
 }

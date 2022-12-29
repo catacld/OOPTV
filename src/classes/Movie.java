@@ -1,5 +1,7 @@
 package classes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 
 public class Movie {
@@ -15,6 +17,7 @@ public class Movie {
 
     private Double rating;
 
+    @JsonIgnore
     private double ratingSum;
 
     private int numRatings;
@@ -35,6 +38,7 @@ public class Movie {
         this.numLikes = movie.getNumLikes();
         this.rating = movie.getRating();
         this.numRatings = movie.getNumRatings();
+        this.ratingSum = movie.getRatingSum();
     }
 
     public final String getName() {
@@ -107,6 +111,14 @@ public class Movie {
 
     public final void setNumRatings(final int numRatings) {
         this.numRatings = numRatings;
+    }
+
+    public double getRatingSum() {
+        return ratingSum;
+    }
+
+    public void setRatingSum(double ratingSum) {
+        this.ratingSum = ratingSum;
     }
 
     /**

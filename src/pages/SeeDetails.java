@@ -2,12 +2,14 @@ package pages;
 
 import classes.User;
 import factory.Factory;
+import ioclasses.Writer;
 import utilities.CheckAction;
 import data.Database;
 import classes.Movie;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class SeeDetails implements Page {
@@ -123,6 +125,27 @@ public class SeeDetails implements Page {
                     return this;
                 }
             }
+        }
+    }
+
+    /**
+     * Will print the output of the action based on the
+     * parameter given
+     * @param code 0 - prints nothing
+     *             1 - prints normal output
+     *             2 - prints error
+     */
+
+    @Override
+    public void printMessage(int code) {
+        if (code == 1) {
+            List<Movie> movieToPrint = new ArrayList<>();
+            movieToPrint.add(movie);
+            Writer.getInstance().addOutput(null,
+                    movieToPrint, Database.getInstance().getCurrentUser());
+        }
+        if (code == 2) {
+            Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         }
     }
 

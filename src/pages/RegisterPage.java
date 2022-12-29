@@ -13,9 +13,9 @@ public final class RegisterPage implements Page {
 
     private static RegisterPage instance = null;
 
-    private ArrayList<String> destinationPages;
+    private final ArrayList<String> destinationPages;
 
-    private ArrayList<String> onPageActions;
+    private final ArrayList<String> onPageActions;
 
     private RegisterPage() {
 
@@ -49,7 +49,6 @@ public final class RegisterPage implements Page {
     public Page changePage(final ObjectNode actionDetails) {
         // since there are no "change page" actions that can be executed
         // while on this page, always write an error
-        Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         return this;
     }
 
@@ -95,6 +94,9 @@ public final class RegisterPage implements Page {
                 Database.getInstance().setCurrentUser(userToAdd);
                 Database.getInstance().deepCopyFilteredMovies(userToAdd);
 
+                // empty the history when the user changes
+                Database.getInstance().getHistory().clear();
+
                 // write the output of the action
                 Writer.getInstance().addOutput(
                         null, new ArrayList<>(), Database.getInstance().getCurrentUser());
@@ -103,6 +105,22 @@ public final class RegisterPage implements Page {
                 Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
                 return UnauthenticatedHome.getInstance();
             }
+        }
+    }
+
+    /**
+     * Will print the output of the action based on the
+     * parameter given
+     * @param code 0 - prints nothing
+     *             1 - prints normal output
+     *             2 - prints error
+     */
+
+    @Override
+    public void printMessage(int code) {
+
+        if (code == 2) {
+            Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         }
     }
 }

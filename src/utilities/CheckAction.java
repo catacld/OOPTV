@@ -6,7 +6,7 @@ import data.Database;
 import ioclasses.Writer;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class CheckAction {
 
@@ -60,7 +60,7 @@ public class CheckAction {
     public static boolean canGoBack() {
 
         return (Database.getInstance().getCurrentUser() != null &&
-                Database.getInstance().getHistory().size() >= 2);
+                !Database.getInstance().getHistory().isEmpty());
     }
 
     public static boolean canSubscribe(User user, Movie movie, String genre) {

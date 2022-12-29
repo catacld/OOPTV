@@ -237,8 +237,7 @@ public class User {
                 // rate the movie in the global list
                 Movie universalMovie = Database.getInstance().getMovie(
                         Database.getInstance().getMovies(), movie.getName());
-                assert universalMovie != null;
-                //universalMovie.rate(rating);
+                universalMovie.rate(rating);
 
                 // write the output
                 List<Movie> movieToPrint = new ArrayList<>();

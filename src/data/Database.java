@@ -42,7 +42,7 @@ public final class Database {
 
     // the list of pages the user has
     // navigated on
-    private ArrayDeque<String> history;
+    private ArrayDeque<Page> history;
 
     // auxiliary list for when the user goes
     // back to a "see details" page
@@ -136,11 +136,11 @@ public final class Database {
         this.filteredMovies = filteredMovies;
     }
 
-    public ArrayDeque<String> getHistory() {
+    public ArrayDeque<Page> getHistory() {
         return history;
     }
 
-    public void setHistory(ArrayDeque<String> history) {
+    public void setHistory(ArrayDeque<Page> history) {
         this.history = history;
     }
 
@@ -235,7 +235,7 @@ public final class Database {
         Movie movie = getMovie(movies, movieTitle);
 
         // the movie does not exist in the database
-        if (getMovie(movies, movie.getName()) == null) {
+        if (movie == null) {
             Writer.getInstance().addOutput("Error", new ArrayList<>(),
                     null);
         } else {

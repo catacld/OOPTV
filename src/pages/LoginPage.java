@@ -12,9 +12,9 @@ public final class LoginPage implements Page {
 
     private static LoginPage instance = null;
 
-    private ArrayList<String> destinationPages;
+    private final ArrayList<String> destinationPages;
 
-    private ArrayList<String> onPageActions;
+    private final ArrayList<String> onPageActions;
 
     // singleton since it is always the same
     // for anyone using the platform
@@ -52,7 +52,6 @@ public final class LoginPage implements Page {
     public Page changePage(final ObjectNode actionDetails) {
         // since there are no "change page" actions that can be executed
         // while on this page, always write an error
-        Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         return this;
     }
 
@@ -92,6 +91,10 @@ public final class LoginPage implements Page {
                 // available movies to the user in the database
                 Database.getInstance().setCurrentUser(loggedUser);
                 Database.getInstance().deepCopyFilteredMovies(loggedUser);
+
+                // empty the history when the user changes
+                Database.getInstance().getHistory().clear();
+
                 Writer.getInstance().addOutput(null, new ArrayList<>(),
                                                 Database.getInstance().getCurrentUser());
                 return new AuthenticatedHome();
@@ -100,6 +103,22 @@ public final class LoginPage implements Page {
                 Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
                 return UnauthenticatedHome.getInstance();
             }
+        }
+    }
+
+    /**
+     * Will print the output of the action based on the
+     * parameter given
+     * @param code 0 - prints nothing
+     *             1 - prints normal output
+     *             2 - prints error
+     */
+
+    @Override
+    public void printMessage(int code) {
+
+        if (code == 2) {
+            Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
         }
     }
 
