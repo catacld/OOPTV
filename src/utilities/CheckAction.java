@@ -68,4 +68,9 @@ public class CheckAction {
                 Database.getInstance().getCurrentMovie() == null ||
                 !movie.getGenres().contains(genre));
     }
+
+    public static boolean shouldRecommend() {
+        return (Database.getInstance().getCurrentUser() != null &&
+                Database.getInstance().getCurrentUser().isPremium());
+    }
 }

@@ -9,7 +9,8 @@ import java.util.Objects;
 public class Movie {
 
     private String name;
-    private int year;
+
+    private String year;
     private int duration;
     private ArrayList<String> genres;
     private ArrayList<String> actors;
@@ -56,11 +57,11 @@ public class Movie {
         this.name = name;
     }
 
-    public final int getYear() {
+    public final String getYear() {
         return this.year;
     }
 
-    public final void setYear(final int year) {
+    public final void setYear(final String year) {
         this.year = year;
     }
 
@@ -171,5 +172,22 @@ public class Movie {
     @Override
     public int hashCode() {
         return Objects.hash(name, year, duration, genres, actors, countriesBanned, numLikes, rating, ratingSum, numRatings);
+    }
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "name='" + name + '\'' +
+                ", year=" + year +
+                ", duration=" + duration +
+                ", genres=" + genres +
+                ", actors=" + actors +
+                ", countriesBanned=" + countriesBanned +
+                ", ratings=" + ratings +
+                ", numLikes=" + numLikes +
+                ", rating=" + rating +
+                ", ratingSum=" + ratingSum +
+                ", numRatings=" + numRatings +
+                '}';
     }
 }

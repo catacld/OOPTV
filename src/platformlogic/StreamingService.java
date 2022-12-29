@@ -38,6 +38,11 @@ public class StreamingService {
         ActionsManager actionsManager = new ActionsManager(readData.readActions());
         actionsManager.manageActions();
 
+        // after executing all the actions
+        // recommend a movie if the
+        // connected user is premium
+        actionsManager.recommend();
+
         //write the output to the file
         Writer.getInstance().writeOutput();
     }

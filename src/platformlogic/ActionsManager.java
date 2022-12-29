@@ -2,10 +2,15 @@ package platformlogic;
 
 
 
+import classes.Movie;
+import classes.Notification;
+import classes.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import data.Database;
+import ioclasses.Writer;
 import pages.Page;
 import pages.UnauthenticatedHome;
+import utilities.CheckAction;
 import utilities.GoBack;
 
 
@@ -69,6 +74,35 @@ public class ActionsManager {
                     return;
                 }
             }
+        }
+    }
+
+
+    public void recommend() {
+
+        if (CheckAction.shouldRecommend()) {
+            User currentUser = Database.getInstance().getCurrentUser();
+
+            //Movie recommendedMovie = Database.getInstance().recommendMovie();
+            Movie recommendedMovie = Database.getInstance().recommendMovie();
+            Notification recommendation;
+
+            // create the recommendation
+            if (recommendedMovie == null) {
+                recommendation = new Notification("No recommendation", "Recommendation");
+            } else {
+                recommendation = new Notification(recommendedMovie.getName(), "Recommendation");
+            }
+
+
+            // send the recommendation as
+            // a notification to the user
+            currentUser.addNotification(recommendation);
+
+            // write the output of the command
+            Writer.getInstance().addOutput(null, null,
+                    Database.getInstance().getCurrentUser());
+
         }
     }
 

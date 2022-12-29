@@ -2,14 +2,12 @@ package classes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import data.Database;
-import genres.Action;
-import genres.Comedy;
-import genres.Crime;
-import genres.Thriller;
+import genres.*;
 import ioclasses.Writer;
 import utilities.CheckAction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,6 +32,11 @@ public class User {
     @JsonIgnore
     private List<String> subscribedGenres;
 
+    @JsonIgnore
+    // used for recommendations based on the
+    // user's likes
+    private HashMap<String, Integer> likedGenres;
+
     public User(final Credentials credentials) {
         this.credentials = credentials;
         purchasedMovies = new ArrayList<>();
@@ -42,6 +45,7 @@ public class User {
         ratedMovies = new ArrayList<>();
         notifications = new ArrayList<>();
         subscribedGenres = new ArrayList<>();
+        likedGenres = new HashMap<>();
         numFreePremiumMovies = 15;
     }
 
@@ -52,6 +56,7 @@ public class User {
         ratedMovies = new ArrayList<>();
         notifications = new ArrayList<>();
         subscribedGenres = new ArrayList<>();
+        likedGenres = new HashMap<>();
         numFreePremiumMovies = 15;
     }
 
@@ -131,6 +136,14 @@ public class User {
         return notifications;
     }
 
+    public HashMap<String, Integer> getLikedGenres() {
+        return likedGenres;
+    }
+
+    public void setLikedGenres(HashMap<String, Integer> likedGenres) {
+        this.likedGenres = likedGenres;
+    }
+
     /**
      * Purchase the movie given as a parameter
      * @param movie the movie to be purchased
@@ -173,12 +186,12 @@ public class User {
         // check if the movie has been purchased
         if (this.purchasedMovies.contains(movie)) {
 
-            if (this.watchedMovies.contains(movie)) {
-                // the user has already watched the movie
-                // do not add it again to the list
-            } else {
-                // add the movie to the user's watched list
+            // the user watches the movie for the
+            // first time
+            if (!this.watchedMovies.contains(movie)) {
+                //add it to the list of watched movies
                 this.watchedMovies.add(movie);
+
 
                 // write the output
                 List<Movie> movieToPrint = new ArrayList<>();
@@ -209,11 +222,11 @@ public class User {
             movie.setNumLikes(movie.getNumLikes() + 1);
 
 
-            // update the movie's number of likes in the global list
-//            Movie universalMovie = Database.getInstance().getMovie(Database.
-//                    getInstance().getMovies(), movie.getName());
-//            assert universalMovie != null;
-//            universalMovie.setNumLikes(universalMovie.getNumLikes() + 1);
+            // update the likes of the movie's genres
+            // for the user
+            for (String genre : movie.getGenres()) {
+                likedGenres.put(genre, likedGenres.getOrDefault(genre, 0) + 1);
+            }
 
             // write the output
             List<Movie> movieToPrint = new ArrayList<>();
@@ -249,14 +262,8 @@ public class User {
                     this.ratedMovies.add(movie);
                 }
 
-
                 // rate the movie in the user's list
                 movie.rate(this, rating);
-
-                // rate the movie in the global list
-//                Movie universalMovie = Database.getInstance().getMovie(
-//                        Database.getInstance().getMovies(), movie.getName());
-//                universalMovie.rate(rating);
 
                 // write the output
                 List<Movie> movieToPrint = new ArrayList<>();
@@ -280,22 +287,26 @@ public class User {
 
     public void subscribe(String genre) {
 
+
         if (!CheckAction.canSubscribe(this, Database.getInstance().getCurrentMovie(), genre)) {
             Writer.getInstance().addOutput("Error", new ArrayList<>(),
                     null);
         } else {
             this.subscribedGenres.add(genre);
             switch (genre) {
-                case "Action" : {
+                case "Action" -> {
                     Action.addSubscriber(this);
                 }
-                case "Comedy" : {
+                case "Comedy" -> {
                     Comedy.addSubscriber(this);
                 }
-                case "Crime" : {
+                case "Crime" -> {
                     Crime.addSubscriber(this);
                 }
-                case "Thriller" : {
+                case "Drama" -> {
+                    Drama.addSubscriber(this);
+                }
+                case "Thriller" -> {
                     Thriller.addSubscriber(this);
                 }
             }
@@ -338,5 +349,10 @@ public class User {
         watchedMovies.remove(movie);
         likedMovies.remove(movie);
         ratedMovies.remove(movie);
+    }
+
+    @JsonIgnore
+    public boolean isPremium() {
+        return credentials.getAccountType().equals("premium");
     }
 }

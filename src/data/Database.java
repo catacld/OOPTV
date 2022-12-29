@@ -6,17 +6,12 @@ import classes.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import genres.Action;
-import genres.Comedy;
-import genres.Crime;
-import genres.Thriller;
+import genres.*;
 import ioclasses.Writer;
 import pages.Page;
 
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public final class Database {
 
@@ -69,7 +64,7 @@ public final class Database {
      * Execute the login action
      * @param username the username of the user
      * @param password the password of the user
-     * @return in case of succes, the logged-in user,
+     * @return the logged-in user, in case of success,
      *          else null
      */
     public User login(final String username, final String password) {
@@ -199,28 +194,33 @@ public final class Database {
 
         // the movie already exists in the database
         if (this.getMovie(this.movies, movie.getName()) != null) {
+
+
             Writer.getInstance().addOutput("Error", new ArrayList<>(),
                     null);
         } else {
             // the movie does not exist in the database
-
             // add the movie to the database
             movies.add(movie);
+
 
             // notify the users
 
             for (String genre: movie.getGenres()) {
                 switch (genre) {
-                    case "Action" : {
+                    case "Action" -> {
                         Action.notify(movie.getName());
                     }
-                    case "Comedy" : {
+                    case "Comedy" -> {
                         Comedy.notify(movie.getName());
                     }
-                    case "Crime" : {
+                    case "Crime" -> {
                         Crime.notify(movie.getName());
                     }
-                    case "Thriller" : {
+                    case "Drama" -> {
+                        Drama.notify(movie.getName());
+                    }
+                    case "Thriller" -> {
                         Thriller.notify(movie.getName());
                     }
                 }
@@ -268,8 +268,69 @@ public final class Database {
         }
     }
 
+    public Movie recommendMovie() {
 
 
+        // sort the genres by likes then lexicographically
+        Comparator<Map.Entry<String, Integer>>  comparator = (a, b) -> {
+            if (a.getValue().compareTo(b.getValue()) == 0) {
+                return a.getKey().compareTo(b.getKey());
+            } else {
+                return a.getValue().compareTo(b.getValue()) ;
+            }
+        };
+
+        List<Map.Entry<String,Integer>> sortedGenres = currentUser.getLikedGenres().entrySet()
+                .stream().sorted(comparator).toList();
+
+
+        // iterate through all the genres
+        // until a  movie to be recommended
+        // is found
+        for (Map.Entry<String, Integer> sortedGenre : sortedGenres) {
+
+            // get all the movies of a certain genre
+
+            String genre = sortedGenre.getKey();
+
+            List<Movie> movies = this.filterByGenre(genre);
+
+            // there are movies that have a specific genre
+            // and have not been watched by the user
+            if (!movies.isEmpty()) {
+                // sort the movies descending
+                // by the number of likes
+                movies.sort((o1, o2) -> (o2.getNumLikes() - o1.getNumLikes()));
+
+                return movies.get(0);
+            }
+
+
+        }
+
+        // no movie has been found
+        return null;
+
+    }
+
+
+
+    private List<Movie> filterByGenre(String genre) {
+
+        List<Movie> genreFiltered = new ArrayList<>();
+
+        for (Movie movie : filteredMovies) {
+
+            // the movie has a specific genre and
+            // has not been watched by the user
+            if (movie.getGenres().contains(genre)
+                && !currentUser.getWatchedMovies().contains(movie)) {
+                genreFiltered.add(movie);
+            }
+        }
+
+        return genreFiltered;
+    }
 
 
 

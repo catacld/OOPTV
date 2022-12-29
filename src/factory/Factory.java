@@ -26,6 +26,10 @@ public class Factory {
 
         Database.getInstance().getHistory().add(ActionsManager.getCurrentPage());
 
+        // the user is not viewing the details of any movie
+        // on any of these pages
+        Database.getInstance().setCurrentMovie(null);
+
         switch (page) {
             case "movies":
                 // reset any filters applied to the list
@@ -75,6 +79,7 @@ public class Factory {
         } else {
             // write the output of the action
             SeeDetails seeDetailsPage = new SeeDetails(detailedMovie);
+            Database.getInstance().setCurrentMovie(detailedMovie);
             seeDetailsPage.printMessage(1);
 
             // the current page will become
