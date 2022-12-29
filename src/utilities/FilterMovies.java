@@ -2,6 +2,7 @@ package utilities;
 
 import classes.Movie;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -134,10 +135,11 @@ public class FilterMovies {
     public static List<Movie> sortByRating(final List<Movie> moviesList,
                                            final String ratingOrder) {
 
-        if (ratingOrder.equals("increasing")) {
-            moviesList.sort((o1, o2) -> (int) (o1.getRating() - o2.getRating()));
-        } else {
-            moviesList.sort((o1, o2) -> (int) (-1 * (o1.getRating() - o2.getRating())));
+
+        moviesList.sort((o1, o2) -> (int) (o1.getRating() - o2.getRating()));
+
+        if (ratingOrder.equals("decreasing")) {
+            Collections.reverse(moviesList);
         }
 
         return moviesList;
@@ -155,10 +157,11 @@ public class FilterMovies {
     public static List<Movie> sortByDuration(final List<Movie> moviesList,
                                              final String durationOrder) {
 
-        if (durationOrder.equals("increasing")) {
-            moviesList.sort(Comparator.comparingInt(Movie::getDuration));
-        } else {
-            moviesList.sort((o1, o2) -> -1 * (o1.getDuration() - o2.getDuration()));
+
+        moviesList.sort(Comparator.comparingInt(Movie::getDuration));
+
+        if (durationOrder.equals("decreasing")) {
+            Collections.reverse(moviesList);
         }
 
         return moviesList;

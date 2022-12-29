@@ -62,11 +62,14 @@ public class Factory {
     public static Page newSeeDetailsPage(final String movie) {
 
         // the movie whose details will be shown
-        Movie detailedMovie = Database.getInstance().getMovie(Database.getInstance().getFilteredMovies(),
+        Movie detailedMovie = Database.getInstance().getMovie(Database.getInstance().getMovies(),
                 movie);
 
-        if (detailedMovie == null) {
-            // the movie is not available for the current user
+
+        Movie filteredMovie = Database.getInstance().getMovie(Database.getInstance().getFilteredMovies(), movie);
+
+        if (filteredMovie == null) {
+            // the movie is not available to the current user
             Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
             return new Movies();
         } else {

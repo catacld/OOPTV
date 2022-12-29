@@ -169,7 +169,7 @@ public final class Database {
         this.filteredMovies = new ArrayList<>();
         for (Movie movie : this.movies) {
             if (!movie.isBannedForTheUser(currentUser.getCredentials().getCountry())) {
-                filteredMovies.add(new Movie(movie));
+                filteredMovies.add(movie);
             }
 
         }

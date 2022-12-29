@@ -3,6 +3,8 @@ package classes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class Movie {
 
@@ -12,6 +14,9 @@ public class Movie {
     private ArrayList<String> genres;
     private ArrayList<String> actors;
     private ArrayList<String> countriesBanned;
+
+    @JsonIgnore
+    private HashMap<User, Double> ratings;
 
     private int numLikes;
 
@@ -25,6 +30,7 @@ public class Movie {
     public Movie() {
         rating = 0.00;
         this.ratingSum = 0.00;
+        this.ratings = new HashMap<>();
     }
 
     // deep-copy constructor
@@ -39,6 +45,7 @@ public class Movie {
         this.rating = movie.getRating();
         this.numRatings = movie.getNumRatings();
         this.ratingSum = movie.getRatingSum();
+        this.ratings = new HashMap<>();
     }
 
     public final String getName() {
@@ -140,10 +147,29 @@ public class Movie {
      * Rate the movie
      * @param givenRating the rating given to the movie
      */
-    public final void rate(final Double givenRating) {
-        this.ratingSum += givenRating;
-        this.numRatings++;
+    public final void rate(final User user, final Double givenRating) {
+        // rate the movie as the user
+        ratings.put(user,givenRating);
+
+        // calculate the rating
+        ratingSum = 0;
+        ratings.forEach(
+                (key, value) -> ratingSum += value );
+
+        this.numRatings = ratings.size();
         this.rating = ratingSum / numRatings;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Movie movie = (Movie) o;
+        return year == movie.year && duration == movie.duration && numLikes == movie.numLikes && Double.compare(movie.ratingSum, ratingSum) == 0 && numRatings == movie.numRatings && Objects.equals(name, movie.name) && Objects.equals(genres, movie.genres) && Objects.equals(actors, movie.actors) && Objects.equals(countriesBanned, movie.countriesBanned) && Objects.equals(rating, movie.rating);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, year, duration, genres, actors, countriesBanned, numLikes, rating, ratingSum, numRatings);
+    }
 }
