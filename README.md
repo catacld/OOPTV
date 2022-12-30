@@ -2,7 +2,7 @@
 # OOP TV
 
 An implementation of the backend of a streaming service, 
-written in java. The commands executed by the user are given inside
+written in java. The strategy executed by the user are given inside
 a JSON file. The user can access multiple pages, and on each page
 execute two types of actions: either "on page", or "change page".
 

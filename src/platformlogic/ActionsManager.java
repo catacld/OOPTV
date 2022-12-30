@@ -10,6 +10,9 @@ import data.Database;
 import ioclasses.Writer;
 import pages.Page;
 import pages.UnauthenticatedHome;
+import strategy.ChangePage;
+import strategy.OnPage;
+import strategy.ProcessAction;
 import utilities.CheckAction;
 import utilities.GoBack;
 
@@ -42,11 +45,13 @@ public class ActionsManager {
                 // execute a "change page" action
                 case "change page" -> {
                     // add the page to the history of pages
-                    currentPage = currentPage.changePage(action);
+                    ProcessAction processAction = new ProcessAction(new ChangePage());
+                    currentPage = processAction.executeAction(action);
                 }
                 // execute an "on page" action
                 case "on page" -> {
-                    currentPage = currentPage.onPage(action);
+                    ProcessAction processAction = new ProcessAction(new OnPage());
+                    currentPage = processAction.executeAction(action);
                 }
                 // subscribe to a genre
                 case "subscribe" -> {
