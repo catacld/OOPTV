@@ -17,11 +17,11 @@ public class Writer {
 
     private static Writer instance = null;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private ArrayNode output = objectMapper.createArrayNode();
 
-    private ObjectWriter objectWriter = this.objectMapper.writerWithDefaultPrettyPrinter();
+    private final ObjectWriter objectWriter = this.objectMapper.writerWithDefaultPrettyPrinter();
 
     private String error;
 

@@ -11,7 +11,7 @@ public class AuthenticatedHome implements Page {
 
     private final ArrayList<String> destinationPages;
 
-    private final ArrayList<String> onPageActions;
+
 
 
 
@@ -24,7 +24,6 @@ public class AuthenticatedHome implements Page {
         destinationPages.add("logout");
         destinationPages.add("homepage autentificat");
 
-        onPageActions = new ArrayList<>();
 
     }
 

@@ -16,7 +16,7 @@ public class Movie {
     private ArrayList<String> countriesBanned;
 
     @JsonIgnore
-    private HashMap<User, Double> ratings;
+    private final HashMap<User, Double> ratings;
 
     private int numLikes;
 
@@ -124,9 +124,6 @@ public class Movie {
         return ratingSum;
     }
 
-    public final void setRatingSum(final double ratingSum) {
-        this.ratingSum = ratingSum;
-    }
 
     /**
      * Check if the movie is banned for a specific suer

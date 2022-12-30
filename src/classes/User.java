@@ -120,14 +120,6 @@ public class User {
         this.ratedMovies = ratedMovies;
     }
 
-    /**
-     * append a notification the user's
-     * notifications queue
-     * @return the list of the user's notifications
-     */
-    public final List<Notification> addNotification() {
-        return notifications;
-    }
 
     public final void setNotifications(final List<Notification> notifications) {
         this.notifications = notifications;
@@ -139,10 +131,6 @@ public class User {
     }
 
 
-    public final void setSubscribedGenres(final List<String> subscribedGenres) {
-        this.subscribedGenres = subscribedGenres;
-    }
-
     public final List<Notification> getNotifications() {
         return notifications;
     }
@@ -152,10 +140,6 @@ public class User {
         return likedGenres;
     }
 
-
-    public final void setLikedGenres(final HashMap<String, Integer> likedGenres) {
-        this.likedGenres = likedGenres;
-    }
 
     /**
      * Purchase the movie given as a parameter

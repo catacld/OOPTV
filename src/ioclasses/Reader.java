@@ -13,9 +13,9 @@ import java.util.List;
 
 public class Reader {
 
-    private String path;
+    private final String path;
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     private JsonNode node;
 

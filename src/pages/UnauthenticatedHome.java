@@ -13,7 +13,6 @@ public final class UnauthenticatedHome implements Page {
 
     private final ArrayList<String> destinationPages;
 
-    private final ArrayList<String> onPageActions;
 
     // singleton since it is always the same for
     // anyone using the platform
@@ -24,7 +23,6 @@ public final class UnauthenticatedHome implements Page {
         destinationPages.add("register");
         destinationPages.add("homepage neautentificat");
 
-        this.onPageActions = new ArrayList<>();
     }
 
     /**
