@@ -90,7 +90,7 @@ public final class LoginPage implements Page {
                 // update the logged-in user and the list of
                 // available movies to the user in the database
                 Database.getInstance().setCurrentUser(loggedUser);
-                Database.getInstance().deepCopyFilteredMovies(loggedUser);
+                Database.getInstance().deepCopyFilteredMovies();
 
                 // empty the history when the user changes
                 Database.getInstance().getHistory().clear();
@@ -115,7 +115,7 @@ public final class LoginPage implements Page {
      */
 
     @Override
-    public void printMessage(int code) {
+    public void printMessage(final int code) {
 
         if (code == 2) {
             Writer.getInstance().addOutput("Error", new ArrayList<>(), null);

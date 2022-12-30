@@ -1,6 +1,6 @@
 package pages;
 
-import classes.*;
+import classes.Movie;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -88,7 +88,7 @@ public class Movies implements Page {
             return this;
         } else {
             // the action can be executed
-            Database.getInstance().deepCopyFilteredMovies(Database.getInstance().getCurrentUser());
+            Database.getInstance().deepCopyFilteredMovies();
             List<Movie> moviesList = Database.getInstance().getFilteredMovies();
             switch (action) {
 
@@ -103,8 +103,7 @@ public class Movies implements Page {
 
                     // reset the original list in the database
                     // since the filter messes it up
-                    Database.getInstance().deepCopyFilteredMovies(
-                            Database.getInstance().getCurrentUser());
+                    Database.getInstance().deepCopyFilteredMovies();
                     return this;
                 }
                 case "filter" -> {
@@ -198,7 +197,7 @@ public class Movies implements Page {
      *             2 - prints error
      */
     @Override
-    public void printMessage(int code) {
+    public void printMessage(final int code) {
 
         if (code == 1) {
             Writer.getInstance().addOutput(null, Database.getInstance().getFilteredMovies(),

@@ -1,6 +1,7 @@
 package pages;
 
-import classes.*;
+import classes.Credentials;
+import classes.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import data.Database;
@@ -92,7 +93,7 @@ public final class RegisterPage implements Page {
 
                 // update the logged-in user
                 Database.getInstance().setCurrentUser(userToAdd);
-                Database.getInstance().deepCopyFilteredMovies(userToAdd);
+                Database.getInstance().deepCopyFilteredMovies();
 
                 // empty the history when the user changes
                 Database.getInstance().getHistory().clear();
@@ -117,7 +118,7 @@ public final class RegisterPage implements Page {
      */
 
     @Override
-    public void printMessage(int code) {
+    public void printMessage(final int code) {
 
         if (code == 2) {
             Writer.getInstance().addOutput("Error", new ArrayList<>(), null);

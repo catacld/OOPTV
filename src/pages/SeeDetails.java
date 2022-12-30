@@ -137,7 +137,7 @@ public class SeeDetails implements Page {
      */
 
     @Override
-    public void printMessage(int code) {
+    public void printMessage(final int code) {
         if (code == 1) {
             List<Movie> movieToPrint = new ArrayList<>();
             movieToPrint.add(movie);

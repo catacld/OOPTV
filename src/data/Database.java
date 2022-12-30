@@ -6,12 +6,20 @@ import classes.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import genres.*;
+import genres.Action;
+import genres.Comedy;
+import genres.Crime;
+import genres.Drama;
+import genres.Thriller;
 import ioclasses.Writer;
 import pages.Page;
 
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 public final class Database {
 
@@ -135,7 +143,7 @@ public final class Database {
         return history;
     }
 
-    public void setHistory(ArrayDeque<Page> history) {
+    public void setHistory(final ArrayDeque<Page> history) {
         this.history = history;
     }
 
@@ -143,7 +151,7 @@ public final class Database {
         return movieTitles;
     }
 
-    public void setMovieTitles(ArrayDeque<String> movieTitles) {
+    public void setMovieTitles(final ArrayDeque<String> movieTitles) {
         this.movieTitles = movieTitles;
     }
 
@@ -151,16 +159,15 @@ public final class Database {
         return currentMovie;
     }
 
-    public void setCurrentMovie(Movie currentMovie) {
+    public void setCurrentMovie(final Movie currentMovie) {
         this.currentMovie = currentMovie;
     }
 
     /**
      * Deep-copy the list of available movies
-     * to a user
-     * @param user the user whose list will be deep-copied
+     * to the current user
      */
-    public void deepCopyFilteredMovies(final User user) {
+    public void deepCopyFilteredMovies() {
         this.filteredMovies = new ArrayList<>();
         for (Movie movie : this.movies) {
             if (!movie.isBannedForTheUser(currentUser.getCredentials().getCountry())) {
@@ -186,6 +193,10 @@ public final class Database {
         return null;
     }
 
+    /**
+     * add a movie to the database
+     * @param addedMovie the movie to be added
+     */
     public void addMovie(final JsonNode addedMovie) {
 
         JsonNode movieData = addedMovie.get("addedMovie");
@@ -223,15 +234,22 @@ public final class Database {
                     case "Thriller" -> {
                         Thriller.notify(movie.getName());
                     }
+                    default -> {
+
+                    }
                 }
             }
         }
 
     }
 
-    public void removeMovie(final ObjectNode addedMovie) {
+    /**
+     * remove a movie from the database
+     * @param removedMovie the movie to be removed
+     */
+    public void removeMovie(final ObjectNode removedMovie) {
 
-        String movieTitle = addedMovie.get("deletedMovie").asText();
+        String movieTitle = removedMovie.get("deletedMovie").asText();
         Movie movie = getMovie(movies, movieTitle);
 
         // the movie does not exist in the database
@@ -240,7 +258,7 @@ public final class Database {
                     null);
         } else {
             for (User user : users) {
-                if (user.hasMovie(movie)) {
+                if (user.hasPurchasedMovie(movie)) {
                     // delete the movie from the database
                     movies.remove(movie);
                     // refund the user
@@ -250,7 +268,8 @@ public final class Database {
                     user.deleteMovie(movie);
                     // notify the user of the deletion
                     // of the movie
-                    Notification notification = new Notification(movie.getName(), "DELETE");
+                    Notification notification = new Notification.NotificationBuilder("DELETE").
+                                                    movieName(movie.getName()).build();
                     user.addNotification(notification);
                 }
             }
@@ -260,7 +279,7 @@ public final class Database {
 
     }
 
-    private void refund (User user) {
+    private void refund(final User user) {
         if (user.getCredentials().getAccountType().equals("standard")) {
             user.setTokensCount(user.getTokensCount() + 2);
         } else {
@@ -268,6 +287,11 @@ public final class Database {
         }
     }
 
+    /**
+     * recommend a movie to the logged in
+     * premium user
+     * @return the recommended movie
+     */
     public Movie recommendMovie() {
 
 
@@ -276,11 +300,11 @@ public final class Database {
             if (a.getValue().compareTo(b.getValue()) == 0) {
                 return a.getKey().compareTo(b.getKey());
             } else {
-                return a.getValue().compareTo(b.getValue()) ;
+                return a.getValue().compareTo(b.getValue());
             }
         };
 
-        List<Map.Entry<String,Integer>> sortedGenres = currentUser.getLikedGenres().entrySet()
+        List<Map.Entry<String, Integer>> sortedGenres = currentUser.getLikedGenres().entrySet()
                 .stream().sorted(comparator).toList();
 
 
@@ -292,17 +316,16 @@ public final class Database {
             // get all the movies of a certain genre
 
             String genre = sortedGenre.getKey();
-
-            List<Movie> movies = this.filterByGenre(genre);
+            List<Movie> genreFilteredMovies = this.filterByGenre(genre);
 
             // there are movies that have a specific genre
             // and have not been watched by the user
-            if (!movies.isEmpty()) {
+            if (!genreFilteredMovies.isEmpty()) {
                 // sort the movies descending
                 // by the number of likes
-                movies.sort((o1, o2) -> (o2.getNumLikes() - o1.getNumLikes()));
+                genreFilteredMovies.sort((o1, o2) -> (o2.getNumLikes() - o1.getNumLikes()));
 
-                return movies.get(0);
+                return genreFilteredMovies.get(0);
             }
 
 
@@ -315,7 +338,7 @@ public final class Database {
 
 
 
-    private List<Movie> filterByGenre(String genre) {
+    private List<Movie> filterByGenre(final String genre) {
 
         List<Movie> genreFiltered = new ArrayList<>();
 

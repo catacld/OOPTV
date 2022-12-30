@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class Movie {
 
@@ -121,11 +120,11 @@ public class Movie {
         this.numRatings = numRatings;
     }
 
-    public double getRatingSum() {
+    public final double getRatingSum() {
         return ratingSum;
     }
 
-    public void setRatingSum(double ratingSum) {
+    public final void setRatingSum(final double ratingSum) {
         this.ratingSum = ratingSum;
     }
 
@@ -150,44 +149,19 @@ public class Movie {
      */
     public final void rate(final User user, final Double givenRating) {
         // rate the movie as the user
-        ratings.put(user,givenRating);
+        ratings.put(user, givenRating);
 
         // calculate the rating
         ratingSum = 0;
         ratings.forEach(
-                (key, value) -> ratingSum += value );
+                (key, value) -> ratingSum += value);
 
         this.numRatings = ratings.size();
         this.rating = ratingSum / numRatings;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Movie movie = (Movie) o;
-        return year == movie.year && duration == movie.duration && numLikes == movie.numLikes && Double.compare(movie.ratingSum, ratingSum) == 0 && numRatings == movie.numRatings && Objects.equals(name, movie.name) && Objects.equals(genres, movie.genres) && Objects.equals(actors, movie.actors) && Objects.equals(countriesBanned, movie.countriesBanned) && Objects.equals(rating, movie.rating);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, year, duration, genres, actors, countriesBanned, numLikes, rating, ratingSum, numRatings);
-    }
 
-    @Override
-    public String toString() {
-        return "Movie{" +
-                "name='" + name + '\'' +
-                ", year=" + year +
-                ", duration=" + duration +
-                ", genres=" + genres +
-                ", actors=" + actors +
-                ", countriesBanned=" + countriesBanned +
-                ", ratings=" + ratings +
-                ", numLikes=" + numLikes +
-                ", rating=" + rating +
-                ", ratingSum=" + ratingSum +
-                ", numRatings=" + numRatings +
-                '}';
-    }
+
+
 }

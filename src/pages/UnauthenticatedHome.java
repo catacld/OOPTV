@@ -94,7 +94,7 @@ public final class UnauthenticatedHome implements Page {
      */
 
     @Override
-    public void printMessage(int code) {
+    public void printMessage(final int code) {
 
         if (code == 2) {
             Writer.getInstance().addOutput("Error", new ArrayList<>(), null);

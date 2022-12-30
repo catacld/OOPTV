@@ -1,15 +1,19 @@
 package classes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import constants.Constants;
 import data.Database;
-import genres.*;
+import genres.Action;
+import genres.Comedy;
+import genres.Crime;
+import genres.Drama;
+import genres.Thriller;
 import ioclasses.Writer;
 import utilities.CheckAction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 
 public class User {
@@ -46,7 +50,7 @@ public class User {
         notifications = new ArrayList<>();
         subscribedGenres = new ArrayList<>();
         likedGenres = new HashMap<>();
-        numFreePremiumMovies = 15;
+        numFreePremiumMovies = Constants.FIFTEEN;
     }
 
     public User() {
@@ -57,7 +61,7 @@ public class User {
         notifications = new ArrayList<>();
         subscribedGenres = new ArrayList<>();
         likedGenres = new HashMap<>();
-        numFreePremiumMovies = 15;
+        numFreePremiumMovies = Constants.FIFTEEN;
     }
 
     public final Credentials getCredentials() {
@@ -116,31 +120,40 @@ public class User {
         this.ratedMovies = ratedMovies;
     }
 
-    public List<Notification> addNotification() {
+    /**
+     * append a notification the user's
+     * notifications queue
+     * @return the list of the user's notifications
+     */
+    public final List<Notification> addNotification() {
         return notifications;
     }
 
-    public void setNotifications(List<Notification> notifications) {
+    public final void setNotifications(final List<Notification> notifications) {
         this.notifications = notifications;
     }
 
-    public List<String> getSubscribedGenres() {
+
+    public final List<String> getSubscribedGenres() {
         return subscribedGenres;
     }
 
-    public void setSubscribedGenres(List<String> subscribedGenres) {
+
+    public final void setSubscribedGenres(final List<String> subscribedGenres) {
         this.subscribedGenres = subscribedGenres;
     }
 
-    public List<Notification> getNotifications() {
+    public final List<Notification> getNotifications() {
         return notifications;
     }
 
-    public HashMap<String, Integer> getLikedGenres() {
+
+    public final HashMap<String, Integer> getLikedGenres() {
         return likedGenres;
     }
 
-    public void setLikedGenres(HashMap<String, Integer> likedGenres) {
+
+    public final void setLikedGenres(final HashMap<String, Integer> likedGenres) {
         this.likedGenres = likedGenres;
     }
 
@@ -252,13 +265,13 @@ public class User {
 
 
             // check if the rating is between 1 and 5
-            if (rating > 5 || rating < 1) {
+            if (rating > Constants.FIVE || rating < 1) {
                 Writer.getInstance().addOutput("Error", new ArrayList<>(), null);
             } else {
                 // add the movie to the user's rated list
                 // if the user rates it for the first
                 // time
-                if (!this.ratedMovies.contains(movie)){
+                if (!this.ratedMovies.contains(movie)) {
                     this.ratedMovies.add(movie);
                 }
 
@@ -285,7 +298,12 @@ public class User {
         }
     }
 
-    public void subscribe(String genre) {
+    /**
+     * subscribe, if possible, to a genre
+     * of movies
+     * @param genre the genre to subscribe to
+     */
+    public final void subscribe(final String genre) {
 
 
         if (!CheckAction.canSubscribe(this, Database.getInstance().getCurrentMovie(), genre)) {
@@ -309,29 +327,37 @@ public class User {
                 case "Thriller" -> {
                     Thriller.addSubscriber(this);
                 }
+                default -> {
+
+                }
             }
         }
 
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return tokensCount == user.tokensCount && numFreePremiumMovies == user.numFreePremiumMovies && Objects.equals(credentials, user.credentials) && Objects.equals(purchasedMovies, user.purchasedMovies) && Objects.equals(watchedMovies, user.watchedMovies) && Objects.equals(likedMovies, user.likedMovies) && Objects.equals(ratedMovies, user.ratedMovies) && Objects.equals(notifications, user.notifications) && Objects.equals(subscribedGenres, user.subscribedGenres);
-    }
-
-    public void addNotification(Notification notification) {
+    /**
+     * add a notification to the user's
+     * notifications queue
+     * @param notification the notification to
+     *                     be added
+     */
+    public void addNotification(final Notification notification) {
         if (!this.alreadyNotified(notification)) {
             notifications.add(notification);
         }
     }
 
 
-    // check if the user has already been notified
-    // of the addition of a new movie
-    private boolean alreadyNotified(Notification notification) {
+
+
+    /**
+     * check if the user has already been notified
+     * of the addition of a new movie
+     * @param notification the notification to be searched for
+     * @return true if the user has already been notified
+     *          false otherwise
+     */
+    private boolean alreadyNotified(final Notification notification) {
         for (Notification n : notifications) {
             if (n.equals(notification)) {
                 return true;
@@ -340,17 +366,34 @@ public class User {
         return false;
     }
 
-    public boolean hasMovie(Movie movie) {
+    /**
+     * check if the user has purchased a movie
+     * to refund it if it is removed
+     * from the database
+     * @param movie the movie to be searched for
+     * @return true if the user owns the movie
+     *          false otherwise
+     */
+    public boolean hasPurchasedMovie(final Movie movie) {
         return purchasedMovies.contains(movie);
     }
 
-    public void deleteMovie(Movie movie) {
+    /**
+     * deletes a movie from the user's lists
+     * @param movie the movie to be deleted
+     */
+    public final void deleteMovie(final Movie movie) {
         purchasedMovies.remove(movie);
         watchedMovies.remove(movie);
         likedMovies.remove(movie);
         ratedMovies.remove(movie);
     }
 
+    /**
+     * check if a user has a premium account
+     * @return true if the user's account is premium
+     *          false otherwise
+     */
     @JsonIgnore
     public boolean isPremium() {
         return credentials.getAccountType().equals("premium");

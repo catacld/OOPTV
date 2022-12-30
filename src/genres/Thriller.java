@@ -6,18 +6,30 @@ import classes.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Thriller {
-    private final static List<User> subscribers = new ArrayList<>();
+public final class Thriller {
+    private static final List<User> SUBSCRIBERS = new ArrayList<>();
 
-    public static void addSubscriber(User user) {
-        subscribers.add(user);
+    private Thriller() {
     }
 
-    public static void notify(String movieName) {
+    /**
+     * add a user to the list of subscribers
+     * @param user the user to be added
+     */
+    public static void addSubscriber(final User user) {
+        SUBSCRIBERS.add(user);
+    }
 
-        Notification notification = new Notification(movieName, "ADD");
+    /**
+     * notify the users of adding a new movie
+     * @param movieName the name of the added movie
+     */
+    public static void notify(final String movieName) {
 
-        for (User user : subscribers) {
+        Notification notification = new Notification.NotificationBuilder("ADD")
+                                        .movieName(movieName).build();
+
+        for (User user : SUBSCRIBERS) {
             user.addNotification(notification);
         }
     }

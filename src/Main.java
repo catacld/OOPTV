@@ -1,6 +1,9 @@
 import platformlogic.StreamingService;
 
-public class Main {
+public final class Main {
+
+    private Main() {
+    }
 
     /**
      * main

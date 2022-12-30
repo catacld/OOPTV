@@ -4,14 +4,24 @@ package factory;
 import classes.Movie;
 import data.Database;
 import ioclasses.Writer;
-import pages.*;
+import pages.AuthenticatedHome;
+import pages.LoginPage;
+import pages.Movies;
+import pages.Page;
+import pages.RegisterPage;
+import pages.SeeDetails;
+import pages.UnauthenticatedHome;
+import pages.Upgrades;
 import platformlogic.ActionsManager;
 
 import java.util.ArrayList;
 
 
 
-public class Factory {
+public final class Factory {
+
+    private Factory() {
+    }
 
     /**
      * Return an instance of a new page
@@ -34,10 +44,7 @@ public class Factory {
             case "movies":
                 // reset any filters applied to the list
                 // of movies
-                Database.getInstance().deepCopyFilteredMovies(
-                        Database.getInstance().getCurrentUser());
-//                Writer.getInstance().addOutput(null, Database.getInstance().getFilteredMovies(),
-//                        Database.getInstance().getCurrentUser());
+                Database.getInstance().deepCopyFilteredMovies();
                 Movies moviesPage =  new Movies();
                 moviesPage.printMessage(1);
                 return moviesPage;
@@ -63,14 +70,21 @@ public class Factory {
         }
     }
 
+    /**
+     * returns a new "See details" page
+     * @param movie the movie which will be on
+     *              the page
+     * @return the new page
+     */
     public static Page newSeeDetailsPage(final String movie) {
 
         // the movie whose details will be shown
         Movie detailedMovie = Database.getInstance().getMovie(Database.getInstance().getMovies(),
                 movie);
 
-
-        Movie filteredMovie = Database.getInstance().getMovie(Database.getInstance().getFilteredMovies(), movie);
+        // check if the movie is available to the user
+        Movie filteredMovie = Database.getInstance().getMovie(
+                Database.getInstance().getFilteredMovies(), movie);
 
         if (filteredMovie == null) {
             // the movie is not available to the current user

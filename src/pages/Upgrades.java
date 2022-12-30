@@ -1,5 +1,6 @@
 package pages;
 
+import constants.Constants;
 import factory.Factory;
 import ioclasses.Writer;
 import utilities.CheckAction;
@@ -104,7 +105,7 @@ public class Upgrades implements Page {
 
                     // substract the price of the premium account
                     Database.getInstance().getCurrentUser().setTokensCount(Database.getInstance().
-                            getCurrentUser().getTokensCount() - 10);
+                            getCurrentUser().getTokensCount() - Constants.TEN);
 
                     return this;
                 }
@@ -124,7 +125,7 @@ public class Upgrades implements Page {
      */
 
     @Override
-    public void printMessage(int code) {
+    public void printMessage(final int code) {
 
         if (code == 2) {
             Writer.getInstance().addOutput("Error", new ArrayList<>(), null);

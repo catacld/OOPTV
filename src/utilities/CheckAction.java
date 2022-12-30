@@ -8,7 +8,10 @@ import ioclasses.Writer;
 import java.util.ArrayList;
 
 
-public class CheckAction {
+public final class CheckAction {
+
+    private CheckAction() {
+    }
 
     // check if a "change page" action can be
     // executed while on a certain page
@@ -57,20 +60,41 @@ public class CheckAction {
         return false;
     }
 
+    /**
+     * check if a user can go on a previous page
+     * by checking if the stack of previous page
+     * is not empty
+     * @return true if the user can go on a previous page
+     *          false otherwise
+     */
     public static boolean canGoBack() {
 
-        return (Database.getInstance().getCurrentUser() != null &&
-                !Database.getInstance().getHistory().isEmpty());
+        return (Database.getInstance().getCurrentUser() != null
+                && !Database.getInstance().getHistory().isEmpty());
     }
 
-    public static boolean canSubscribe(User user, Movie movie, String genre) {
-        return !(user.getSubscribedGenres().contains(genre) ||
-                Database.getInstance().getCurrentMovie() == null ||
-                !movie.getGenres().contains(genre));
+    /**
+     * check if a user can subscribe to a genre
+     * while being on a movie's page
+     * @param user the user to subscribe
+     * @param movie the movie's page the user is on
+     * @param genre the genre to subscribe to
+     * @return true if the user can subscribe
+     *          false otherwise
+     */
+    public static boolean canSubscribe(final User user, final Movie movie, final String genre) {
+        return !(user.getSubscribedGenres().contains(genre)
+                || Database.getInstance().getCurrentMovie() == null
+                || !movie.getGenres().contains(genre));
     }
 
+    /**
+     * checks if a recommendation should be made
+     * @return true if a recommendation should be made
+     *          false otherwise
+     */
     public static boolean shouldRecommend() {
-        return (Database.getInstance().getCurrentUser() != null &&
-                Database.getInstance().getCurrentUser().isPremium());
+        return (Database.getInstance().getCurrentUser() != null
+                && Database.getInstance().getCurrentUser().isPremium());
     }
 }

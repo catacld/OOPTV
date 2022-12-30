@@ -6,9 +6,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class FilterMovies {
+public final class FilterMovies {
 
-
+    private FilterMovies() {
+    }
 
     /**
      * Filter a list of movies by an actor

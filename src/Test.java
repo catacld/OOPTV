@@ -1,12 +1,18 @@
 import checker.Checkstyle;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import constants.Constants;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 class Config {
     private String homework;
@@ -137,7 +143,7 @@ public final class Test {
 
         for (final File testFile : Objects.requireNonNull(TEST_INPUTS_FILE.listFiles())) {
 
-            if (i <= 10) {
+            if (i <= Constants.TEN) {
                 String testFileName = testFile.getName();
 
                 preTestCleanUp();
@@ -160,7 +166,8 @@ public final class Test {
         System.out.println("This value can be exceeded for great implementations.");
     }
 
-    private static void runTest(final String testFileName, final Config config, final Future<Object> task) {
+    private static void runTest(final String testFileName,
+                                final Config config, final Future<Object> task) {
         ObjectMapper objectMapper = new ObjectMapper();
         File refFile = new File(CHECKER_RESOURCES_FOLDER + REF_FOLDER + testFileName);
 
@@ -208,7 +215,7 @@ public final class Test {
         return executor.submit(task);
     }
 
-    private static String[] createTestArgv(final File testFile, String testFileName) {
+    private static String[] createTestArgv(final File testFile, final String testFileName) {
         List<String> listArgv = new ArrayList<>();
         listArgv.add(testFile.getAbsolutePath());
         listArgv.add(OUT_FILE);
@@ -224,7 +231,8 @@ public final class Test {
         printMessage(testFileName, message, false);
     }
 
-    private static void printMessage(final String testFileName, final String message, final boolean trail) {
+    private static void printMessage(final String testFileName,
+                                     final String message, final boolean trail) {
         String fileName = testFileName.split("\\.")[0];
         if (trail) {
             System.out.println("[" + fileName + "]: ..................... " + message);

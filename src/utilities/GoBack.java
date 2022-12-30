@@ -6,9 +6,16 @@ import pages.Page;
 
 import java.util.ArrayList;
 
-public class GoBack {
+public final class GoBack {
 
+    private GoBack() {
+    }
 
+    /**
+     * goes back on the last visited page
+     * @return the last page that
+     *          the user visited
+     */
     public static Page back() {
 
         // check if the user can go back

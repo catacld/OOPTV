@@ -77,7 +77,10 @@ public class ActionsManager {
         }
     }
 
-
+    /**
+     * recommend a movie to the logged in
+     * premium user
+     */
     public void recommend() {
 
         if (CheckAction.shouldRecommend()) {
@@ -89,9 +92,10 @@ public class ActionsManager {
 
             // create the recommendation
             if (recommendedMovie == null) {
-                recommendation = new Notification("No recommendation", "Recommendation");
+                recommendation = new Notification.NotificationBuilder("Recommendation").build();
             } else {
-                recommendation = new Notification(recommendedMovie.getName(), "Recommendation");
+                recommendation = new Notification.NotificationBuilder("Recommendation")
+                                    .movieName(recommendedMovie.getName()).build();
             }
 
 
