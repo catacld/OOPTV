@@ -183,11 +183,11 @@ public class User {
         // check if the movie has been purchased
         if (this.purchasedMovies.contains(movie)) {
 
-            // the user watches the movie for the
-            // first time
-            if (!this.watchedMovies.contains(movie)) {
-                //add it to the list of watched movies
-                this.watchedMovies.add(movie);
+                // add it to the list of watched movies
+                // if the movie has not been watched before
+                if (!this.watchedMovies.contains(movie)) {
+                    this.watchedMovies.add(movie);
+                }
 
 
                 // write the output
@@ -195,7 +195,7 @@ public class User {
                 movieToPrint.add(movie);
                 Writer.getInstance().addOutput(null,
                         movieToPrint, Database.getInstance().getCurrentUser());
-            }
+
         } else {
             // the movie has not been purchased
             // write an error

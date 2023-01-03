@@ -53,11 +53,6 @@ public class ActionsManager {
                     ProcessAction processAction = new ProcessAction(new OnPage());
                     currentPage = processAction.executeAction(action);
                 }
-                // subscribe to a genre
-                case "subscribe" -> {
-                    String genre = action.get("subscribedGenre").asText();
-                    Database.getInstance().getCurrentUser().subscribe(genre);
-                }
                 // execute a "database" action
                 case "database" -> {
                     String feature = action.get("feature").asText();

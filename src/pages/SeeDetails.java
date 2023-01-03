@@ -38,6 +38,7 @@ public class SeeDetails implements Page {
         onPageActions.add("watch");
         onPageActions.add("like");
         onPageActions.add("rate");
+        onPageActions.add("subscribe");
 
     }
 
@@ -118,6 +119,16 @@ public class SeeDetails implements Page {
 
                     // rate the movie
                     currentUser.rate(movie, Double.parseDouble(rating));
+
+                    return this;
+                }
+
+                case "subscribe" -> {
+
+                    String genre = actionDetails.get("subscribedGenre").asText();
+
+                    // subscribe to the given genre of movies
+                    Database.getInstance().getCurrentUser().subscribe(genre);
 
                     return this;
                 }

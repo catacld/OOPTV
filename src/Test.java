@@ -1,6 +1,6 @@
 import checker.Checkstyle;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import constants.Constants;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -118,7 +118,7 @@ public final class Test {
      */
     public static void main(final String[] argv) {
         runTests();
-        //preTestCleanUp();
+        preTestCleanUp();
         System.exit(0);
     }
 
@@ -139,11 +139,9 @@ public final class Test {
         Config config = loadConfig();
         totalScore = config.getCheckstyleScore();
         int manualScore = config.getReadmeScore() + config.getHomeworkDesignScore();
-        int i = 1;
 
         for (final File testFile : Objects.requireNonNull(TEST_INPUTS_FILE.listFiles())) {
 
-            if (i <= Constants.TEN) {
                 String testFileName = testFile.getName();
 
                 preTestCleanUp();
@@ -152,8 +150,6 @@ public final class Test {
                 final Future<Object> future = createTimerTask(testArgv);
 
                 runTest(testFileName, config, future);
-                i++;
-            }
         }
 
         score += Checkstyle.testCheckstyle();
