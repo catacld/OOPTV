@@ -7,12 +7,12 @@ import genres.Action;
 import genres.Comedy;
 import genres.Crime;
 import genres.Drama;
+import genres.Genre;
 import genres.Thriller;
 import ioclasses.Writer;
 import utilities.CheckAction;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -39,7 +39,7 @@ public class User {
     @JsonIgnore
     // used for recommendations based on the
     // user's likes
-    private HashMap<String, Integer> likedGenres;
+    private ArrayList<Genre> likedGenres;
 
     public User(final Credentials credentials) {
         this.credentials = credentials;
@@ -49,7 +49,7 @@ public class User {
         ratedMovies = new ArrayList<>();
         notifications = new ArrayList<>();
         subscribedGenres = new ArrayList<>();
-        likedGenres = new HashMap<>();
+        likedGenres = new ArrayList<>();
         numFreePremiumMovies = Constants.FIFTEEN;
     }
 
@@ -60,7 +60,7 @@ public class User {
         ratedMovies = new ArrayList<>();
         notifications = new ArrayList<>();
         subscribedGenres = new ArrayList<>();
-        likedGenres = new HashMap<>();
+        likedGenres = new ArrayList<>();
         numFreePremiumMovies = Constants.FIFTEEN;
     }
 
@@ -136,7 +136,7 @@ public class User {
     }
 
 
-    public final HashMap<String, Integer> getLikedGenres() {
+    public final ArrayList<Genre> getLikedGenres() {
         return likedGenres;
     }
 
@@ -222,7 +222,7 @@ public class User {
             // update the likes of the movie's genres
             // for the user
             for (String genre : movie.getGenres()) {
-                likedGenres.put(genre, likedGenres.getOrDefault(genre, 0) + 1);
+                this.updatelikes(genre);
             }
 
             // write the output
@@ -381,5 +381,34 @@ public class User {
     @JsonIgnore
     public boolean isPremium() {
         return credentials.getAccountType().equals("premium");
+    }
+
+    private void updatelikes(final String genre) {
+        // check if the user has already liked a
+        // movie of this genre
+        for (Genre g : likedGenres) {
+            if (g.getNameOfGenre().equals(genre)) {
+                g.setLikes(g.getLikes() + 1);
+                return;
+            }
+        }
+
+        // the user has not liked any movies of
+        // this genre
+
+        switch (genre) {
+            case "Action":
+                likedGenres.add(new Action());
+            case "Comedy":
+                likedGenres.add(new Comedy());
+            case "Crime":
+                likedGenres.add(new Crime());
+            case "Drama":
+                likedGenres.add(new Drama());
+            case "Thriller":
+                likedGenres.add(new Thriller());
+            default:
+
+        }
     }
 }

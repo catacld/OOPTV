@@ -6,11 +6,12 @@ import classes.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Drama {
+public final class Drama extends Genre {
 
     private static final List<User> SUBSCRIBERS = new ArrayList<>();
 
-    private Drama() {
+    public Drama() {
+        super("Drama", 1);
     }
 
     /**

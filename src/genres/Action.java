@@ -6,11 +6,12 @@ import classes.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Action {
+public final class Action extends Genre {
 
     private static final List<User> SUBSCRIBERS = new ArrayList<>();
 
-    private Action() {
+    public Action() {
+        super("Action", 1);
     }
 
     /**

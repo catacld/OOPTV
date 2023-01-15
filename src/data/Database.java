@@ -10,6 +10,7 @@ import genres.Action;
 import genres.Comedy;
 import genres.Crime;
 import genres.Drama;
+import genres.Genre;
 import genres.Thriller;
 import ioclasses.Writer;
 import pages.Page;
@@ -19,7 +20,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 public final class Database {
 
@@ -295,28 +295,26 @@ public final class Database {
     public Movie recommendMovie() {
 
 
+
         // sort the genres by likes then lexicographically
-        Comparator<Map.Entry<String, Integer>>  comparator = (a, b) -> {
-            if (a.getValue().compareTo(b.getValue()) == 0) {
-                return a.getKey().compareTo(b.getKey());
+        Comparator<Genre>  comparator = (a, b) -> {
+            if (a.getLikes() ==  b.getLikes()) {
+                return a.getNameOfGenre().compareTo(b.getNameOfGenre());
             } else {
-                return a.getValue().compareTo(b.getValue());
+                return a.getLikes() - b.getLikes();
             }
         };
 
-        List<Map.Entry<String, Integer>> sortedGenres = currentUser.getLikedGenres().entrySet()
-                .stream().sorted(comparator).toList();
+        currentUser.getLikedGenres().sort(comparator);
 
 
         // iterate through all the genres
         // until a  movie to be recommended
         // is found
-        for (Map.Entry<String, Integer> sortedGenre : sortedGenres) {
+        for (Genre genre : currentUser.getLikedGenres()) {
 
             // get all the movies of a certain genre
-
-            String genre = sortedGenre.getKey();
-            List<Movie> genreFilteredMovies = this.filterByGenre(genre);
+            List<Movie> genreFilteredMovies = this.filterByGenre(genre.getNameOfGenre());
 
             // there are movies that have a specific genre
             // and have not been watched by the user
