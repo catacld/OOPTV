@@ -101,7 +101,7 @@ More details about a specific movie are displayed on this page.
 ##### At the end of the given actions, if there is a premium user connected to the streaming service a recommendation of a movie will be made to the user and sent as a notification. The recommendation algorithm sorts the genres of movies descending by the number of likes given to each genre by the user, or lexicographically if the number of likes is equal and then each movie of each genre descending by the number of total likes. Each genre of movie which has at least one like given by the user will be iterated through until a movie that has not been seen by the current user is found. The movie name is then sent as a notification to the user. If no movie is found to be recommended, the movie will get a notification with the message "No recommendation".
 
 
-## Design pattern used
+## Design patterns used
 ##### **Singleton** - for pages that are the same for any user accessing the platform, such as unauthenticated homepage, register page, and login page.
 #####  **Factory** - when changing the page the user is viewing, after executing a successful "change page" action.
 ##### **Observer** - when notifying the user of the addition of a new movie to the database.
